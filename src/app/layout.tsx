@@ -1,19 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { ClerkProvider } from '@clerk/nextjs';
 import "./globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
 
 export const metadata: Metadata = {
   title: "SimpleStepsFinance - Master Your Money, One Simple Step at a Time",
   description: "Take control of your finances with a personalized roadmap, simple tools, and steady progress. Built for real people, not finance experts.",
-  keywords: "personal finance, budgeting, debt payoff, financial planning, money management",
 };
 
 export default function RootLayout({
@@ -22,16 +12,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={`${inter.variable} font-sans antialiased`}>
-          <Header />
-          <main className="min-h-screen">
+    <html lang="en">
+      <body className="font-sans antialiased">
+        <div style={{ padding: '20px' }}>
+          <h1>SimpleStepsFinance</h1>
+          <main>
             {children}
           </main>
-          <Footer />
-        </body>
-      </html>
-    </ClerkProvider>
+        </div>
+      </body>
+    </html>
   );
 }
