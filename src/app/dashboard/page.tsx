@@ -37,9 +37,24 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [selectedStep, setSelectedStep] = useState<string | null>(null);
   const [assessmentAnswers, setAssessmentAnswers] = useState<Record<string, number>>({});
+  const [isPaidUser, setIsPaidUser] = useState(false);
+
+  // Check if user has paid subscription
+  const checkSubscriptionStatus = () => {
+    if (!user) return false;
+    
+    // Check user's public metadata for subscription status
+    const metadata = user.publicMetadata as any;
+    return metadata?.subscriptionStatus === 'active' || 
+           metadata?.plan === 'premium' ||
+           metadata?.isPaid === true;
+  };
 
   useEffect(() => {
     if (isLoaded && user) {
+      // Check subscription status
+      setIsPaidUser(checkSubscriptionStatus());
+      
       setTimeout(() => {
         setUserData({
           stage: {
@@ -412,43 +427,64 @@ export default function DashboardPage() {
             </div>
 
             {/* Action Items */}
-            <div className="card card-elevated" style={{ padding: '2rem' }}>
-              <h2 style={{
-                fontSize: '1.75rem',
-                fontWeight: '700',
-                color: '#111827',
+            <div className="card card-elevated" style={{ padding: '2rem', position: 'relative' }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
                 marginBottom: '1.5rem'
               }}>
-                Your Action Plan
-              </h2>
+                <h2 style={{
+                  fontSize: '1.75rem',
+                  fontWeight: '700',
+                  color: '#111827'
+                }}>
+                  Your Action Plan
+                </h2>
+                {!isPaidUser && (
+                  <div style={{
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#fef3c7',
+                    color: '#92400e',
+                    borderRadius: '2rem',
+                    fontSize: '0.875rem',
+                    fontWeight: '600'
+                  }}>
+                    Free Preview
+                  </div>
+                )}
+              </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {userData.stage.steps.map((step, index) => {
                   const isCompleted = step.completed;
                   const isCurrent = step.current;
-                  const showAssessment = selectedStep === step.id;
+                  const showAssessment = selectedStep === step.id && isPaidUser;
+                  const isBlocked = !isPaidUser && index > 0; // Only show first step for free users
                   
                   return (
-                    <div key={step.id}>
+                    <div key={step.id} style={{ position: 'relative' }}>
                       <div style={{
                         display: 'flex',
                         alignItems: 'flex-start',
                         padding: '1.25rem',
                         borderRadius: '0.75rem',
                         border: '2px solid',
-                        borderColor: isCompleted ? '#86efac' : isCurrent ? '#93c5fd' : '#e5e7eb',
-                        backgroundColor: isCompleted ? '#f0fdf4' : isCurrent ? '#eff6ff' : '#ffffff',
+                        borderColor: isBlocked ? '#e5e7eb' : (isCompleted ? '#86efac' : isCurrent ? '#93c5fd' : '#e5e7eb'),
+                        backgroundColor: isBlocked ? '#f9fafb' : (isCompleted ? '#f0fdf4' : isCurrent ? '#eff6ff' : '#ffffff'),
                         transition: 'all 0.2s ease-in-out',
-                        cursor: isCurrent && !showAssessment ? 'pointer' : 'default'
+                        cursor: isCurrent && !showAssessment && !isBlocked ? 'pointer' : 'default',
+                        filter: isBlocked ? 'blur(2px)' : 'none',
+                        opacity: isBlocked ? 0.6 : 1
                       }}
-                      onClick={() => isCurrent && !showAssessment && setSelectedStep(step.id)}
+                      onClick={() => isCurrent && !showAssessment && !isBlocked && setSelectedStep(step.id)}
                       >
                         <div style={{
                           width: '2.5rem',
                           height: '2.5rem',
                           borderRadius: '50%',
-                          backgroundColor: isCompleted ? '#10b981' : isCurrent ? '#2563eb' : '#e5e7eb',
-                          color: isCompleted || isCurrent ? '#ffffff' : '#6b7280',
+                          backgroundColor: isBlocked ? '#e5e7eb' : (isCompleted ? '#10b981' : isCurrent ? '#2563eb' : '#e5e7eb'),
+                          color: isBlocked ? '#6b7280' : (isCompleted || isCurrent ? '#ffffff' : '#6b7280'),
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -456,13 +492,13 @@ export default function DashboardPage() {
                           fontSize: '1rem',
                           flexShrink: 0
                         }}>
-                          {isCompleted ? '✓' : index + 1}
+                          {isBlocked ? '🔒' : (isCompleted ? '✓' : index + 1)}
                         </div>
                         
                         <div style={{ marginLeft: '1rem', flex: 1 }}>
                           <p style={{
                             fontWeight: '600',
-                            color: isCompleted ? '#166534' : '#111827',
+                            color: isBlocked ? '#6b7280' : (isCompleted ? '#166534' : '#111827'),
                             marginBottom: '0.25rem',
                             textDecoration: isCompleted ? 'line-through' : 'none'
                           }}>
@@ -470,12 +506,12 @@ export default function DashboardPage() {
                           </p>
                           <p style={{
                             fontSize: '0.875rem',
-                            color: isCompleted ? '#4ade80' : '#6b7280',
-                            marginBottom: isCurrent && !showAssessment ? '0.5rem' : '0'
+                            color: isBlocked ? '#6b7280' : (isCompleted ? '#4ade80' : '#6b7280'),
+                            marginBottom: isCurrent && !showAssessment && !isBlocked ? '0.5rem' : '0'
                           }}>
                             {step.description}
                           </p>
-                          {isCurrent && !showAssessment && (
+                          {isCurrent && !showAssessment && !isBlocked && (
                             <p style={{
                               fontSize: '0.875rem',
                               color: '#2563eb',
@@ -487,8 +523,42 @@ export default function DashboardPage() {
                         </div>
                       </div>
                       
-                      {/* Assessment Section */}
-                      {showAssessment && (
+                      {/* Upgrade overlay for blocked steps */}
+                      {isBlocked && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          zIndex: 10,
+                          textAlign: 'center'
+                        }}>
+                          <div style={{
+                            backgroundColor: '#ffffff',
+                            padding: '1rem 1.5rem',
+                            borderRadius: '0.75rem',
+                            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                            border: '2px solid #2563eb'
+                          }}>
+                            <p style={{
+                              fontSize: '0.875rem',
+                              fontWeight: '600',
+                              color: '#2563eb',
+                              marginBottom: '0.5rem'
+                            }}>
+                              Unlock Full Plan
+                            </p>
+                            <Link href="/pricing">
+                              <button className="btn btn-primary btn-sm">
+                                Upgrade Now
+                              </button>
+                            </Link>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Assessment Section - Only for paid users */}
+                      {showAssessment && isPaidUser && (
                         <div style={{
                           marginTop: '1rem',
                           marginLeft: '3.5rem',
@@ -563,6 +633,52 @@ export default function DashboardPage() {
                   );
                 })}
               </div>
+
+              {/* Upgrade CTA for free users */}
+              {!isPaidUser && (
+                <div style={{
+                  marginTop: '2rem',
+                  padding: '2rem',
+                  backgroundColor: '#eff6ff',
+                  borderRadius: '0.75rem',
+                  border: '1px solid #93c5fd',
+                  textAlign: 'center'
+                }}>
+                  <h3 style={{
+                    fontSize: '1.25rem',
+                    fontWeight: '600',
+                    color: '#1e40af',
+                    marginBottom: '1rem'
+                  }}>
+                    Unlock Your Complete Financial Roadmap
+                  </h3>
+                  <p style={{
+                    color: '#1e40af',
+                    marginBottom: '1.5rem',
+                    lineHeight: '1.6'
+                  }}>
+                    Get access to all {userData.stage.steps.length} personalized action steps, interactive assessments, and progress tracking to accelerate your financial journey.
+                  </p>
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1rem',
+                    alignItems: 'center'
+                  }}>
+                    <Link href="/pricing">
+                      <button className="btn btn-primary btn-lg">
+                        Upgrade to Premium - $9/month
+                      </button>
+                    </Link>
+                    <p style={{
+                      fontSize: '0.875rem',
+                      color: '#6b7280'
+                    }}>
+                      Cancel anytime • 30-day money-back guarantee
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -691,11 +807,6 @@ export default function DashboardPage() {
                 >
                   <span style={{ marginRight: '0.5rem' }}>📊</span> View Progress Report
                 </button>
-                <Link href="/settings">
-                  <button className="btn btn-outline" style={{ width: '100%', justifyContent: 'flex-start' }}>
-                    <span style={{ marginRight: '0.5rem' }}>⚙️</span> Account Settings
-                  </button>
-                </Link>
               </div>
             </div>
           </div>

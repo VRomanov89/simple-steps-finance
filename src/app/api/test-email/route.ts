@@ -24,8 +24,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Send test email
+    const fromEmail = process.env.NODE_ENV === 'production' 
+      ? 'Simple Steps Finance <hello@resend.dev>' // Change to your domain when ready
+      : 'Simple Steps Finance <onboarding@resend.dev>';
+
     const { data, error } = await resend.emails.send({
-      from: 'Simple Steps Finance <onboarding@resend.dev>', // Use verified Resend domain for testing
+      from: fromEmail,
       to: email,
       subject: 'Test Email - Simple Steps Finance',
       html: `
