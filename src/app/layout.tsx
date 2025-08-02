@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from '@clerk/nextjs';
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -12,15 +13,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="font-sans antialiased">
-        <div style={{ padding: '20px' }}>
-          <h1>SimpleStepsFinance</h1>
-          <main>
-            {children}
-          </main>
-        </div>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className="font-sans antialiased">
+          <div style={{ padding: '20px' }}>
+            <h1>SimpleStepsFinance</h1>
+            <main>
+              {children}
+            </main>
+          </div>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
