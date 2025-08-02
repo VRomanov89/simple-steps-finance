@@ -99,26 +99,26 @@ Create a `.env.local` file in your project root:
 
 ```bash
 # Clerk Authentication
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
-CLERK_SECRET_KEY=sk_test_your_key_here
-CLERK_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=[Your Clerk publishable key]
+CLERK_SECRET_KEY=[Your Clerk secret key]
+CLERK_WEBHOOK_SECRET=[Your Clerk webhook secret]
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_SUPABASE_URL=[Your Supabase project URL]
+NEXT_PUBLIC_SUPABASE_ANON_KEY=[Your Supabase anon key]
+SUPABASE_SERVICE_ROLE_KEY=[Your Supabase service role key]
 
 # Stripe
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_key_here
-STRIPE_SECRET_KEY=sk_test_your_key_here
-NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID=price_monthly_id_here
-NEXT_PUBLIC_STRIPE_YEARLY_PRICE_ID=price_yearly_id_here
-STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=[Your Stripe publishable key]
+STRIPE_SECRET_KEY=[Your Stripe secret key]
+NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID=[Your monthly price ID]
+NEXT_PUBLIC_STRIPE_YEARLY_PRICE_ID=[Your yearly price ID]
+STRIPE_WEBHOOK_SECRET=[Your Stripe webhook secret]
 
 # Resend
-RESEND_API_KEY=re_your_api_key_here
+RESEND_API_KEY=[Your Resend API key]
 
 # App URLs
 NEXT_PUBLIC_APP_URL=http://localhost:3000

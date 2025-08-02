@@ -51,7 +51,7 @@ If you want to test with real users right now:
 Make sure these are set in your production environment:
 
 ```bash
-RESEND_API_KEY=re_your_actual_api_key_here
+RESEND_API_KEY=[Your Resend API key]
 NEXT_PUBLIC_APP_URL=https://your-domain.com
 ```
 
