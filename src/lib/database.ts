@@ -42,6 +42,21 @@ export async function updateUser(id: string, updates: Partial<User>) {
   return data;
 }
 
+export async function updateUserByStripeCustomer(stripeCustomerId: string, updates: Partial<User>) {
+  const { data, error } = await supabaseAdmin
+    .from('users')
+    .update(updates)
+    .eq('stripe_customer_id', stripeCustomerId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Failed to update user by Stripe customer ID:', error);
+    throw error;
+  }
+  return data;
+}
+
 // Stage operations
 export async function getAllStages(): Promise<Stage[]> {
   const { data, error } = await supabase

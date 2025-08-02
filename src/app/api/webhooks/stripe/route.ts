@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
-import { updateUser } from '@/lib/database';
+import { updateUser, updateUserByStripeCustomer } from '@/lib/database';
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -57,9 +57,10 @@ export async function POST(req: NextRequest) {
         console.log('💰 Payment succeeded for invoice:', invoice.id);
 
         if (invoice.customer && invoice.subscription) {
-          // Find user by stripe customer ID and ensure subscription is active
-          // This would require a database query to find the user by stripe_customer_id
-          console.log('📝 TODO: Update user subscription status to active');
+          await updateUserByStripeCustomer(invoice.customer as string, {
+            subscription_status: 'active',
+          });
+          console.log('✅ User subscription marked as active');
         }
         break;
       }
@@ -69,8 +70,13 @@ export async function POST(req: NextRequest) {
         console.log('📋 Subscription updated:', subscription.id);
 
         // Update user subscription status based on subscription status
-        const status = subscription.status === 'active' ? 'active' : 'canceled';
-        console.log('📝 TODO: Update user subscription status to:', status);
+        const status = subscription.status === 'active' ? 'active' : 
+                      subscription.status === 'canceled' ? 'canceled' : 'free';
+        
+        await updateUserByStripeCustomer(subscription.customer as string, {
+          subscription_status: status as 'free' | 'active' | 'canceled',
+        });
+        console.log('✅ User subscription status updated to:', status);
         break;
       }
 
@@ -78,8 +84,10 @@ export async function POST(req: NextRequest) {
         const subscription = event.data.object;
         console.log('❌ Subscription canceled:', subscription.id);
 
-        // Mark user subscription as canceled
-        console.log('📝 TODO: Update user subscription status to canceled');
+        await updateUserByStripeCustomer(subscription.customer as string, {
+          subscription_status: 'canceled',
+        });
+        console.log('✅ User subscription marked as canceled');
         break;
       }
 

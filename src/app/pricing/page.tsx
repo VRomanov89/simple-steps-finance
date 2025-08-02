@@ -26,32 +26,71 @@ export default function PricingPage() {
     },
   };
 
+  // Debug: Log the price IDs to console
+  console.log('Stripe Price IDs:', {
+    monthly: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID,
+    yearly: process.env.NEXT_PUBLIC_STRIPE_YEARLY_PRICE_ID,
+    currentPlanType: planType,
+    currentPlan: plans[planType]
+  });
+
   const currentPlan = plans[planType];
 
   const handleSubscribe = async () => {
+    console.log('handleSubscribe called', { isSignedIn, currentPlan });
+    
     if (!isSignedIn) {
+      console.log('User not signed in, redirecting to sign-up');
       router.push('/sign-up');
       return;
     }
 
+    // Validate price ID exists
+    if (!currentPlan.priceId) {
+      console.error('Price ID not configured for plan:', planType);
+      alert('Payment configuration error. Please contact support.');
+      return;
+    }
+
+    console.log('About to proceed with checkout for price ID:', currentPlan.priceId);
+
     setLoading(true);
 
     try {
+      console.log('Creating checkout session with:', {
+        priceId: currentPlan.priceId,
+        planType
+      });
+
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          priceId: currentPlan.priceId || 'price_placeholder',
+          priceId: currentPlan.priceId,
           planType,
         }),
       });
 
-      const { sessionId, error } = await response.json();
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API response error:', response.status, errorText);
+        throw new Error(`API Error: ${response.status} - ${errorText}`);
+      }
+
+      const responseData = await response.json();
+      console.log('API response:', responseData);
+      
+      const { sessionId, error, details } = responseData;
 
       if (error) {
-        throw new Error(error);
+        console.error('Checkout session error:', error, 'Details:', details);
+        throw new Error(details || error);
+      }
+
+      if (!sessionId) {
+        throw new Error('No session ID returned from checkout API');
       }
 
       // Redirect to Stripe Checkout
@@ -61,11 +100,17 @@ export default function PricingPage() {
       const stripeInstance = await stripe;
       
       if (stripeInstance) {
-        await stripeInstance.redirectToCheckout({ sessionId });
+        const { error: stripeError } = await stripeInstance.redirectToCheckout({ sessionId });
+        if (stripeError) {
+          console.error('Stripe redirect error:', stripeError);
+          throw new Error(stripeError.message);
+        }
+      } else {
+        throw new Error('Failed to load Stripe');
       }
     } catch (error) {
       console.error('Error creating checkout session:', error);
-      alert('Something went wrong. Please try again.');
+      alert(`Something went wrong: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`);
     } finally {
       setLoading(false);
     }

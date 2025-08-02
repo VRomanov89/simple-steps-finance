@@ -2,37 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-
-interface StepData {
-  id: string;
-  title: string;
-  description: string;
-  assessment: {
-    question: string;
-    options: { text: string; correct: boolean }[];
-  };
-  resources: string[];
-  completed: boolean;
-  current: boolean;
-}
-
-interface UserData {
-  stage: {
-    id: number;
-    label: string;
-    description: string;
-    steps: StepData[];
-  };
-  quiz_score: number;
-  roadmap_progress: {
-    completed_steps: string[];
-    current_step: string;
-  };
-}
+import { UserData, StepData } from '@/utils/dashboard';
+import { getUserDashboardData, updateUserProgress, checkUserSubscription, migrateLocalStorageToDatabase } from '@/lib/user-service';
 
 export default function DashboardPage() {
   const { user, isLoaded } = useUser();
+  const router = useRouter();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedStep, setSelectedStep] = useState<string | null>(null);
@@ -51,133 +28,28 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    if (isLoaded && user) {
-      // Check subscription status
-      setIsPaidUser(checkSubscriptionStatus());
-      
-      setTimeout(() => {
-        setUserData({
-          stage: {
-            id: 3,
-            label: 'Budget Beginner',
-            description: 'Building structure, new to tracking',
-            steps: [
-              {
-                id: 'budget',
-                title: 'Create a zero-based budget',
-                description: 'Learn to allocate every dollar with purpose using the zero-based budgeting method.',
-                assessment: {
-                  question: 'What is the main goal of zero-based budgeting?',
-                  options: [
-                    { text: 'To spend all your money', correct: false },
-                    { text: 'To allocate every dollar to a specific category', correct: true },
-                    { text: 'To save as much as possible', correct: false },
-                    { text: 'To track expenses only', correct: false }
-                  ]
-                },
-                resources: [
-                  'Zero-Based Budget Template',
-                  'Budget Categories Guide',
-                  'Monthly Budget Planner'
-                ],
-                completed: true,
-                current: false
-              },
-              {
-                id: 'tracking',
-                title: 'Track expenses weekly',
-                description: 'Develop the habit of monitoring your spending patterns to stay on budget.',
-                assessment: {
-                  question: 'How often should you review your expenses to build good habits?',
-                  options: [
-                    { text: 'Once a month', correct: false },
-                    { text: 'Weekly', correct: true },
-                    { text: 'Daily', correct: false },
-                    { text: 'Yearly', correct: false }
-                  ]
-                },
-                resources: [
-                  'Expense Tracking App Guide',
-                  'Weekly Review Checklist',
-                  'Spending Categories Worksheet'
-                ],
-                completed: false,
-                current: true
-              },
-              {
-                id: 'emergency',
-                title: 'Save first $1,000 emergency fund',
-                description: 'Build a starter emergency fund to protect against unexpected expenses.',
-                assessment: {
-                  question: 'Why is $1,000 a good starting amount for an emergency fund?',
-                  options: [
-                    { text: 'It covers most small emergencies', correct: true },
-                    { text: 'It\'s the maximum you should save', correct: false },
-                    { text: 'It\'s required by law', correct: false },
-                    { text: 'It earns the most interest', correct: false }
-                  ]
-                },
-                resources: [
-                  'Emergency Fund Calculator',
-                  'High-Yield Savings Guide',
-                  'Emergency Fund Challenge'
-                ],
-                completed: false,
-                current: false
-              },
-              {
-                id: 'debt',
-                title: 'Pay more than minimums on smallest debt',
-                description: 'Use the debt snowball method to eliminate your smallest debt first.',
-                assessment: {
-                  question: 'What is the debt snowball method?',
-                  options: [
-                    { text: 'Pay minimums on all debts', correct: false },
-                    { text: 'Pay extra on the highest interest debt', correct: false },
-                    { text: 'Pay extra on the smallest debt first', correct: true },
-                    { text: 'Consolidate all debts', correct: false }
-                  ]
-                },
-                resources: [
-                  'Debt Snowball Calculator',
-                  'Debt Payoff Tracker',
-                  'Motivation Tips Guide'
-                ],
-                completed: false,
-                current: false
-              },
-              {
-                id: 'automation',
-                title: 'Automate bill payments',
-                description: 'Set up automatic payments to never miss due dates and improve your credit.',
-                assessment: {
-                  question: 'What\'s the main benefit of automating bill payments?',
-                  options: [
-                    { text: 'It saves money on fees', correct: false },
-                    { text: 'It prevents late payments and fees', correct: true },
-                    { text: 'It reduces your bills', correct: false },
-                    { text: 'It eliminates all debt', correct: false }
-                  ]
-                },
-                resources: [
-                  'Automation Setup Guide',
-                  'Bill Calendar Template',
-                  'Bank Setup Instructions'
-                ],
-                completed: false,
-                current: false
-              }
-            ]
-          },
-          quiz_score: 11,
-          roadmap_progress: {
-            completed_steps: ['budget'],
-            current_step: 'tracking'
-          }
-        });
-        setLoading(false);
-      }, 1000);
-    }
+    const loadUserData = async () => {
+      if (isLoaded && user) {
+        try {
+          // First, migrate any localStorage data to database
+          await migrateLocalStorageToDatabase(user.id);
+          
+          // Check subscription status from database
+          const hasActiveSubscription = await checkUserSubscription(user.id);
+          setIsPaidUser(hasActiveSubscription);
+          
+          // Load user data from database
+          const dashboardData = await getUserDashboardData(user.id);
+          setUserData(dashboardData);
+          setLoading(false);
+        } catch (error) {
+          console.error('Error loading user data:', error);
+          setLoading(false);
+        }
+      }
+    };
+
+    loadUserData();
   }, [isLoaded, user]);
 
   const handleAssessmentSubmit = (stepId: string) => {
@@ -198,14 +70,22 @@ export default function DashboardPage() {
             return s;
           });
           
+          const newProgress = {
+            completed_steps: [...prev.roadmap_progress.completed_steps, stepId],
+            current_step: getNextStepId(stepId, prev.stage.steps) || stepId
+          };
+          
+          // Save progress to database
+          if (user) {
+            updateUserProgress(user.id, newProgress).catch(error => {
+              console.error('Failed to save progress to database:', error);
+            });
+          }
+          
           return {
             ...prev,
             stage: { ...prev.stage, steps: updatedSteps },
-            roadmap_progress: {
-              ...prev.roadmap_progress,
-              completed_steps: [...prev.roadmap_progress.completed_steps, stepId],
-              current_step: getNextStepId(stepId, prev.stage.steps) || stepId
-            }
+            roadmap_progress: newProgress
           };
         });
         setSelectedStep(null);
@@ -219,6 +99,27 @@ export default function DashboardPage() {
   const getNextStepId = (currentStepId: string, steps: StepData[]): string | null => {
     const currentIndex = steps.findIndex(s => s.id === currentStepId);
     return currentIndex < steps.length - 1 ? steps[currentIndex + 1].id : null;
+  };
+
+  const handleRetakeQuiz = async () => {
+    // Clear any remaining localStorage data
+    localStorage.removeItem('quizResults');
+    localStorage.removeItem('dashboardProgress');
+    
+    // Reset user progress in database
+    if (user) {
+      try {
+        await updateUserProgress(user.id, {
+          completed_steps: [],
+          current_step: ''
+        });
+      } catch (error) {
+        console.error('Failed to reset progress in database:', error);
+      }
+    }
+    
+    // Redirect to quiz
+    router.push('/quiz');
   };
 
   if (!isLoaded || loading) {
@@ -523,39 +424,6 @@ export default function DashboardPage() {
                         </div>
                       </div>
                       
-                      {/* Upgrade overlay for blocked steps */}
-                      {isBlocked && (
-                        <div style={{
-                          position: 'absolute',
-                          top: '50%',
-                          left: '50%',
-                          transform: 'translate(-50%, -50%)',
-                          zIndex: 10,
-                          textAlign: 'center'
-                        }}>
-                          <div style={{
-                            backgroundColor: '#ffffff',
-                            padding: '1rem 1.5rem',
-                            borderRadius: '0.75rem',
-                            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                            border: '2px solid #2563eb'
-                          }}>
-                            <p style={{
-                              fontSize: '0.875rem',
-                              fontWeight: '600',
-                              color: '#2563eb',
-                              marginBottom: '0.5rem'
-                            }}>
-                              Unlock Full Plan
-                            </p>
-                            <Link href="/pricing">
-                              <button className="btn btn-primary btn-sm">
-                                Upgrade Now
-                              </button>
-                            </Link>
-                          </div>
-                        </div>
-                      )}
                       
                       {/* Assessment Section - Only for paid users */}
                       {showAssessment && isPaidUser && (
@@ -710,6 +578,21 @@ export default function DashboardPage() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#6b7280' }}>Current Stage</span>
                   <span style={{ fontWeight: '600', color: '#111827' }}>{userData.stage.id}/8</span>
+                </div>
+                
+                {/* Retake Quiz Button */}
+                <div style={{ 
+                  marginTop: '1.5rem',
+                  paddingTop: '1.5rem',
+                  borderTop: '1px solid #e5e7eb'
+                }}>
+                  <button 
+                    onClick={handleRetakeQuiz}
+                    className="btn btn-outline"
+                    style={{ width: '100%' }}
+                  >
+                    🔄 Retake Quiz
+                  </button>
                 </div>
               </div>
             </div>

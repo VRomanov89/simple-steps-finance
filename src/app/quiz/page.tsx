@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 import QuizForm from '@/components/quiz/QuizForm';
 import EmailCapture from '@/components/quiz/EmailCapture';
+import { saveUserQuizResults } from '@/lib/user-service';
 
 type QuizState = 'intro' | 'questions' | 'email' | 'processing';
 
@@ -16,6 +18,7 @@ interface QuizResults {
 export default function QuizPage() {
   const [state, setState] = useState<QuizState>('intro');
   const [quizResults, setQuizResults] = useState<QuizResults | null>(null);
+  const { user } = useUser();
   const router = useRouter();
 
   const handleStartQuiz = () => {
@@ -36,8 +39,22 @@ export default function QuizPage() {
         email,
       };
 
-      // Store quiz results and email in local storage
+      // Store quiz results in local storage as backup (will be migrated to DB on dashboard)
       localStorage.setItem('quizResults', JSON.stringify(resultsWithEmail));
+
+      // If user is logged in, save results to database immediately
+      if (user && quizResults) {
+        try {
+          await saveUserQuizResults(user.id, {
+            totalScore: quizResults.totalScore,
+            stage: quizResults.stage,
+            answers: quizResults.answers || []
+          });
+          console.log('✅ Quiz results saved to database');
+        } catch (dbError) {
+          console.warn('Failed to save to database, will retry on dashboard visit:', dbError);
+        }
+      }
 
       // Send email with results
       try {
