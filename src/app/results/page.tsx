@@ -433,7 +433,7 @@ export default function ResultsPage() {
                   </Link>
                   <Link href="/sign-up">
                     <button className="btn btn-outline" style={{
-                      minWidth: '200px'
+                      minWidth: '250px'
                     }}>
                       Create Free Account
                     </button>
