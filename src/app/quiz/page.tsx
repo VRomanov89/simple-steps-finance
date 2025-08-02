@@ -82,12 +82,12 @@ export default function QuizPage() {
               animate={{ opacity: 1, y: 0 }}
               className="mb-12"
             >
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-6">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 rounded-full mb-6">
                 <span className="text-3xl">💰</span>
               </div>
               <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
                 Discover Your
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
+                <span className="text-blue-600 block">
                   Financial Stage
                 </span>
               </h1>
@@ -117,7 +117,7 @@ export default function QuizPage() {
                       transition={{ delay: 0.3 + (index * 0.1) }}
                       className="flex items-start space-x-3"
                     >
-                      <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg flex items-center justify-center">
+                      <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                         <span className="text-lg">{benefit.icon}</span>
                       </div>
                       <div>

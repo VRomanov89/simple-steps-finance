@@ -37,9 +37,8 @@ export default function Button({
   
   const variants = {
     primary: `
-      bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 
-      text-white shadow-lg hover:shadow-xl focus:ring-blue-500
-      disabled:from-gray-400 disabled:to-gray-400 disabled:shadow-none
+      bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl 
+      focus:ring-blue-500 disabled:bg-gray-400 disabled:shadow-none
     `,
     secondary: `
       bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 

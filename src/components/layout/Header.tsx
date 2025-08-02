@@ -28,7 +28,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-md">
               <span className="text-white font-bold text-lg">$</span>
             </div>
             <div className="flex flex-col">
@@ -72,7 +72,7 @@ export default function Header() {
                   </Button>
                 </Link>
                 <Link href="/quiz">
-                  <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                  <Button size="sm">
                     Start Free Quiz
                   </Button>
                 </Link>

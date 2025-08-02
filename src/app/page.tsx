@@ -77,7 +77,7 @@ export default function Home() {
             >
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
                 Master Your Money,
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
+                <span className="text-blue-600 block">
                   One Simple Step
                 </span>
                 at a Time
@@ -95,7 +95,7 @@ export default function Home() {
               className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
             >
               <Link href={isSignedIn ? '/dashboard' : '/quiz'}>
-                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-4 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all">
+                <Button size="lg" className="text-lg px-8 py-4 shadow-lg hover:shadow-xl">
                   {isSignedIn ? 'Go to Dashboard' : 'Start Your Free Quiz'}
                 </Button>
               </Link>
