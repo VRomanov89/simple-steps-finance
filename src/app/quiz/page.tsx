@@ -1,12 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import QuizForm from '@/components/quiz/QuizForm';
 import EmailCapture from '@/components/quiz/EmailCapture';
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
 
 type QuizState = 'intro' | 'questions' | 'email' | 'processing';
 
@@ -71,177 +68,298 @@ export default function QuizPage() {
     }
   ];
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        
-        {state === 'intro' && (
-          <div className="text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-12"
-            >
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 rounded-full mb-6">
-                <span className="text-3xl">💰</span>
-              </div>
-              <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                Discover Your
-                <span className="text-blue-600 block">
-                  Financial Stage
-                </span>
-              </h1>
-              <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-10 leading-relaxed">
-                Take our free assessment to find out where you are on your financial journey and get a 
-                <span className="font-semibold text-gray-800"> personalized roadmap</span> to reach your goals.
-              </p>
-            </motion.div>
+  if (state === 'questions') {
+    return <QuizForm onComplete={handleQuizComplete} />;
+  }
 
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="mb-12"
-            >
-              <Card variant="elevated" padding="lg" className="text-left max-w-2xl mx-auto">
-                <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
-                  Here's what you'll get:
-                </h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                  {benefits.map((benefit, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + (index * 0.1) }}
-                      className="flex items-start space-x-3"
-                    >
-                      <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <span className="text-lg">{benefit.icon}</span>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900 mb-1">{benefit.title}</h3>
-                        <p className="text-sm text-gray-600">{benefit.description}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <Button 
-                  onClick={handleStartQuiz} 
-                  fullWidth 
-                  size="lg"
-                  className="mb-4"
-                >
-                  Start My Free Assessment
-                </Button>
-                
-                <p className="text-center text-sm text-gray-500">
-                  No spam, no sales pitches. Just helpful financial guidance.
-                </p>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="flex items-center justify-center space-x-8 text-sm text-gray-500"
-            >
-              <div className="flex items-center">
-                <span className="text-green-500 mr-2">✓</span>
-                100% Free
-              </div>
-              <div className="flex items-center">
-                <span className="text-green-500 mr-2">✓</span>
-                No Credit Card
-              </div>
-              <div className="flex items-center">
-                <span className="text-green-500 mr-2">✓</span>
-                Instant Results
-              </div>
-            </motion.div>
+  if (state === 'email') {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #f3f4f6 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem 1rem'
+      }}>
+        <div style={{ maxWidth: '32rem', width: '100%', textAlign: 'center' }}>
+          <div style={{
+            width: '5rem',
+            height: '5rem',
+            background: 'linear-gradient(135deg, #10b981 0%, #3b82f6 100%)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 1.5rem auto',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+          }}>
+            <span style={{ fontSize: '2rem' }}>🎉</span>
           </div>
-        )}
-
-        {state === 'questions' && (
-          <QuizForm onComplete={handleQuizComplete} />
-        )}
-
-        {state === 'email' && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center"
-          >
-            <div className="mb-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mb-6">
-                <span className="text-3xl">🎉</span>
-              </div>
-              <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
-                Assessment Complete!
-              </h1>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                You're ready to discover your financial stage and get your personalized roadmap to success.
-              </p>
-            </div>
-            <EmailCapture 
-              onSubmit={handleEmailSubmit}
-              loading={state === 'processing'}
-            />
-          </motion.div>
-        )}
-
-        {state === 'processing' && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="max-w-lg mx-auto text-center"
-          >
-            <Card variant="elevated" padding="xl">
-              <div className="mb-6">
-                <motion.div
-                  animate={{ 
-                    rotate: 360,
-                    scale: [1, 1.1, 1]
-                  }}
-                  transition={{ 
-                    rotate: { duration: 2, repeat: Infinity, ease: 'linear' },
-                    scale: { duration: 1, repeat: Infinity }
-                  }}
-                  className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center"
-                >
-                  <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                </motion.div>
-              </div>
-              
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">
-                Analyzing Your Results...
-              </h2>
-              <p className="text-gray-600 mb-6">
-                We're calculating your financial stage and preparing your personalized roadmap. This will just take a moment.
-              </p>
-              
-              <div className="space-y-2">
-                <motion.div 
-                  className="h-2 bg-gray-200 rounded-full overflow-hidden"
-                  initial={{ width: 0 }}
-                >
-                  <motion.div 
-                    className="h-full bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"
-                    animate={{ width: '100%' }}
-                    transition={{ duration: 3, ease: 'easeInOut' }}
-                  />
-                </motion.div>
-                <p className="text-sm text-gray-500">
-                  Creating your personalized financial roadmap...
-                </p>
-              </div>
-            </Card>
-          </motion.div>
-        )}
+          <h1 style={{
+            fontSize: 'clamp(2rem, 5vw, 3rem)',
+            fontWeight: '700',
+            color: '#111827',
+            marginBottom: '1rem'
+          }}>
+            Assessment Complete!
+          </h1>
+          <p style={{
+            fontSize: '1.25rem',
+            color: '#4b5563',
+            marginBottom: '2rem',
+            lineHeight: '1.6'
+          }}>
+            You're ready to discover your financial stage and get your personalized roadmap to success.
+          </p>
+          <EmailCapture 
+            onSubmit={handleEmailSubmit}
+            loading={state === 'processing'}
+          />
+        </div>
       </div>
+    );
+  }
+
+  if (state === 'processing') {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #f3f4f6 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem 1rem'
+      }}>
+        <div style={{ maxWidth: '28rem', width: '100%' }}>
+          <div className="card card-elevated" style={{ textAlign: 'center', padding: '3rem 2rem' }}>
+            <div style={{
+              width: '4rem',
+              height: '4rem',
+              background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem auto',
+              position: 'relative'
+            }}>
+              <div style={{
+                width: '2rem',
+                height: '2rem',
+                border: '3px solid #ffffff',
+                borderTop: '3px solid transparent',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }}></div>
+            </div>
+            
+            <h2 style={{
+              fontSize: '1.5rem',
+              fontWeight: '700',
+              color: '#111827',
+              marginBottom: '0.75rem'
+            }}>
+              Analyzing Your Results...
+            </h2>
+            <p style={{
+              color: '#4b5563',
+              marginBottom: '1.5rem',
+              lineHeight: '1.6'
+            }}>
+              We're calculating your financial stage and preparing your personalized roadmap. This will just take a moment.
+            </p>
+            
+            <div style={{ marginBottom: '0.5rem' }}>
+              <div style={{
+                height: '0.5rem',
+                backgroundColor: '#e5e7eb',
+                borderRadius: '0.25rem',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  height: '100%',
+                  background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                  borderRadius: '0.25rem',
+                  width: '75%',
+                  animation: 'progressLoad 3s ease-in-out infinite'
+                }} />
+              </div>
+            </div>
+            <p style={{
+              fontSize: '0.875rem',
+              color: '#6b7280'
+            }}>
+              Creating your personalized financial roadmap...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #f3f4f6 100%)',
+      paddingTop: '2rem',
+      paddingBottom: '4rem'
+    }}>
+      <div className="container" style={{ maxWidth: '64rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <div style={{
+            width: '5rem',
+            height: '5rem',
+            background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 1.5rem auto',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+          }}>
+            <span style={{ fontSize: '2rem' }}>💰</span>
+          </div>
+          <h1 style={{
+            fontSize: 'clamp(2.5rem, 8vw, 4rem)',
+            fontWeight: '700',
+            color: '#111827',
+            marginBottom: '1.5rem',
+            lineHeight: '1.1'
+          }}>
+            Discover Your
+            <span style={{ 
+              display: 'block',
+              color: '#2563eb',
+              marginTop: '0.5rem'
+            }}>
+              Financial Stage
+            </span>
+          </h1>
+          <p style={{
+            fontSize: 'clamp(1.125rem, 2.5vw, 1.5rem)',
+            color: '#4b5563',
+            maxWidth: '48rem',
+            margin: '0 auto 2rem auto',
+            lineHeight: '1.6'
+          }}>
+            Take our free assessment to find out where you are on your financial journey and get a 
+            <span style={{ fontWeight: '600', color: '#1f2937' }}> personalized roadmap</span> to reach your goals.
+          </p>
+        </div>
+
+        <div style={{ maxWidth: '48rem', margin: '0 auto' }}>
+          <div className="card card-elevated" style={{ padding: '2.5rem', marginBottom: '2rem' }}>
+            <h2 style={{
+              fontSize: '1.5rem',
+              fontWeight: '700',
+              color: '#111827',
+              marginBottom: '2rem',
+              textAlign: 'center'
+            }}>
+              Here's what you'll get:
+            </h2>
+            
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '1.5rem',
+              marginBottom: '2rem'
+            }}>
+              {benefits.map((benefit, index) => (
+                <div key={index} style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '0.75rem'
+                }}>
+                  <div style={{
+                    width: '2.5rem',
+                    height: '2.5rem',
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    borderRadius: '0.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <span style={{ fontSize: '1.125rem' }}>{benefit.icon}</span>
+                  </div>
+                  <div>
+                    <h3 style={{
+                      fontWeight: '600',
+                      color: '#111827',
+                      marginBottom: '0.25rem',
+                      fontSize: '1rem'
+                    }}>
+                      {benefit.title}
+                    </h3>
+                    <p style={{
+                      fontSize: '0.875rem',
+                      color: '#4b5563',
+                      lineHeight: '1.5'
+                    }}>
+                      {benefit.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button 
+              onClick={handleStartQuiz}
+              className="btn btn-primary btn-lg"
+              style={{ 
+                width: '100%',
+                marginBottom: '1rem',
+                fontSize: '1.125rem',
+                padding: '1rem 2rem'
+              }}
+            >
+              Start My Free Assessment
+            </button>
+            
+            <p style={{
+              textAlign: 'center',
+              fontSize: '0.875rem',
+              color: '#6b7280'
+            }}>
+              No spam, no sales pitches. Just helpful financial guidance.
+            </p>
+          </div>
+
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            gap: '2rem',
+            fontSize: '0.875rem',
+            color: '#6b7280'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: '#10b981', marginRight: '0.5rem' }}>✓</span>
+              100% Free
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: '#10b981', marginRight: '0.5rem' }}>✓</span>
+              No Credit Card
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: '#10b981', marginRight: '0.5rem' }}>✓</span>
+              Instant Results
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+        @keyframes progressLoad {
+          0%, 100% { width: 25%; }
+          50% { width: 75%; }
+        }
+      `}</style>
     </div>
   );
 }
