@@ -120,6 +120,27 @@ export default function Home() {
                   </button>
                 </Link>
               </div>
+              {!isSignedIn && (
+                <p style={{
+                  marginTop: '1rem',
+                  fontSize: '0.9375rem',
+                  color: '#6b7280'
+                }}>
+                  Already have an account?{' '}
+                  <Link href="/sign-in" style={{
+                    color: '#2563eb',
+                    fontWeight: '500',
+                    textDecoration: 'none',
+                    borderBottom: '1px solid transparent',
+                    transition: 'border-color 0.2s ease-in-out'
+                  }}
+                  onMouseOver={(e) => e.target.style.borderBottom = '1px solid #2563eb'}
+                  onMouseOut={(e) => e.target.style.borderBottom = '1px solid transparent'}
+                  >
+                    Sign in here
+                  </Link>
+                </p>
+              )}
             </div>
 
             <div style={{

@@ -172,7 +172,6 @@ export default function Header() {
                 <Link href="/sign-in">
                   <button 
                     className="btn btn-secondary btn-sm"
-                    style={{ display: 'none' }}
                     onMouseOver={(e) => {
                       e.target.style.transform = 'translateY(-1px)';
                       e.target.style.boxShadow = '0 6px 12px -2px rgba(0, 0, 0, 0.15)';

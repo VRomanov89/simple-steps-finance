@@ -54,6 +54,8 @@ export default function Page() {
               footerActionLink: 'text-primary-600 hover:text-primary-700',
             },
           }}
+          signInUrl="/sign-in"
+          forceRedirectUrl="/quiz"
         />
       </div>
     </div>

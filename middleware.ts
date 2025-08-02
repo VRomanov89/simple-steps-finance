@@ -1,27 +1,39 @@
-// Temporarily disabled middleware for debugging
-// import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-// const isProtectedRoute = createRouteMatcher([
-//   '/dashboard(.*)',
-//   '/account(.*)',
-// ]);
+// Define protected routes that require authentication
+const isProtectedRoute = createRouteMatcher([
+  '/dashboard(.*)',
+  '/account(.*)',
+  '/settings(.*)',
+]);
 
-// export default clerkMiddleware(async (auth, req) => {
-//   if (isProtectedRoute(req)) {
-//     await auth.protect();
-//   }
-// });
+// Define public routes that should always be accessible
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/quiz(.*)',
+  '/results(.*)',
+  '/pricing(.*)',
+  '/about(.*)',
+  '/contact(.*)',
+  '/blog(.*)',
+  '/privacy(.*)',
+  '/terms(.*)',
+]);
 
-// export const config = {
-//   matcher: [
-//     // Skip Next.js internals and all static files, unless found in search params
-//     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-//     // Always run for API routes
-//     '/(api|trpc)(.*)',
-//   ],
-// };
+export default clerkMiddleware(async (auth, req) => {
+  // Protect routes that require authentication
+  if (isProtectedRoute(req)) {
+    await auth.protect();
+  }
+});
 
-// Placeholder export to make this a valid module
-export default function middleware() {
-  // Disabled for debugging
-}
+export const config = {
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
+  ],
+};

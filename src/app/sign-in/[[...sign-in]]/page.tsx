@@ -54,6 +54,8 @@ export default function Page() {
               footerActionLink: 'text-primary-600 hover:text-primary-700',
             },
           }}
+          signUpUrl="/sign-up"
+          forceRedirectUrl="/dashboard"
         />
       </div>
     </div>
