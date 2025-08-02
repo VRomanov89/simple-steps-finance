@@ -181,6 +181,11 @@ export async function checkUserSubscription(clerkUserId: string): Promise<boolea
 // Sync user data from localStorage to database (migration helper)
 export async function migrateLocalStorageToDatabase(clerkUserId: string) {
   try {
+    // Only run on client side
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     // Check if user has quiz results in localStorage
     const quizResults = localStorage.getItem('quizResults');
     const dashboardProgress = localStorage.getItem('dashboardProgress');

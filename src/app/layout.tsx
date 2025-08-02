@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ClerkProvider } from './clerk-provider';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,20 +25,22 @@ export default function RootLayout({
           margin: 0,
           padding: 0
         }}>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            minHeight: '100vh'
-          }}>
-            <Header />
-            <main style={{
-              flex: 1,
-              paddingTop: '4.5rem'
+          <ErrorBoundary>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: '100vh'
             }}>
-              {children}
-            </main>
-            <Footer />
-          </div>
+              <Header />
+              <main style={{
+                flex: 1,
+                paddingTop: '4.5rem'
+              }}>
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </ErrorBoundary>
         </body>
       </html>
     </ClerkProvider>

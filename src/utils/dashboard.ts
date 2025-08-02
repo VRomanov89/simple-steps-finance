@@ -129,6 +129,11 @@ const generateResourcesForStep = (step: NextStep): string[] => {
 // Load user data from localStorage and convert to dashboard format
 export const loadUserDataFromStorage = (): UserData | null => {
   try {
+    // Only run on client side
+    if (typeof window === 'undefined') {
+      return null;
+    }
+
     const quizResults = localStorage.getItem('quizResults');
     if (!quizResults) return null;
 
@@ -184,6 +189,11 @@ export const loadUserDataFromStorage = (): UserData | null => {
 // Save dashboard progress to localStorage
 export const saveDashboardProgress = (progress: { completed_steps: string[]; current_step: string }) => {
   try {
+    // Only run on client side
+    if (typeof window === 'undefined') {
+      return;
+    }
+    
     localStorage.setItem('dashboardProgress', JSON.stringify(progress));
   } catch (error) {
     console.error('Failed to save dashboard progress:', error);
