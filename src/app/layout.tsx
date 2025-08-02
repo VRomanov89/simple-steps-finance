@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from '@clerk/nextjs';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,12 +17,13 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className="font-sans antialiased">
-          <div style={{ padding: '20px' }}>
-            <h1>SimpleStepsFinance</h1>
-            <main>
+        <body className="font-sans antialiased min-h-screen bg-gray-50">
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-1">
               {children}
             </main>
+            <Footer />
           </div>
         </body>
       </html>
