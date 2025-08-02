@@ -2,9 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
 import { UserButton, useUser } from '@clerk/nextjs';
-import Button from '@/components/ui/Button';
 
 export default function Header() {
   const { isSignedIn } = useUser();
@@ -19,40 +17,96 @@ export default function Header() {
   ];
 
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header style={{
+      position: 'sticky',
+      top: 0,
+      zIndex: 50,
+      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+      backdropFilter: 'blur(10px)',
+      borderBottom: '1px solid #e5e7eb',
+      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+    }}>
+      <div className="container">
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          height: '4rem'
+        }}>
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-md">
-              <span className="text-white font-bold text-lg">$</span>
+          <Link href="/" style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            textDecoration: 'none'
+          }}>
+            <div style={{
+              width: '2.5rem',
+              height: '2.5rem',
+              backgroundColor: '#2563eb',
+              borderRadius: '0.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+            }}>
+              <span style={{
+                color: '#ffffff',
+                fontWeight: '700',
+                fontSize: '1.125rem'
+              }}>$</span>
             </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-xl text-gray-900 tracking-tight">SimpleSteps</span>
-              <span className="text-xs text-gray-500 -mt-1">Finance</span>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{
+                fontWeight: '700',
+                fontSize: '1.25rem',
+                color: '#111827',
+                letterSpacing: '-0.025em'
+              }}>SimpleSteps</span>
+              <span style={{
+                fontSize: '0.75rem',
+                color: '#6b7280',
+                marginTop: '-0.125rem'
+              }}>Finance</span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
+          <nav style={{
+            display: 'none',
+            alignItems: 'center',
+            gap: '2rem'
+          }} className="lg:flex">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
+                style={{
+                  color: '#4b5563',
+                  fontWeight: '500',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s ease-in-out',
+                  position: 'relative',
+                  padding: '0.5rem 0'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.color = '#2563eb';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.color = '#4b5563';
+                }}
               >
                 {item.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
               </Link>
             ))}
           </nav>
 
           {/* Auth Buttons */}
-          <div className="flex items-center space-x-4">
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem'
+          }}>
             {isSignedIn ? (
               <UserButton 
                 appearance={{
@@ -65,16 +119,20 @@ export default function Header() {
                 afterSignOutUrl="/"
               />
             ) : (
-              <div className="flex items-center space-x-3">
-                <Link href="/sign-in" className="hidden sm:block">
-                  <Button variant="outline" size="sm">
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem'
+              }}>
+                <Link href="/sign-in" style={{ display: 'none' }} className="sm:block">
+                  <button className="btn btn-secondary btn-sm">
                     Sign In
-                  </Button>
+                  </button>
                 </Link>
                 <Link href="/quiz">
-                  <Button size="sm">
+                  <button className="btn btn-primary btn-sm">
                     Start Free Quiz
-                  </Button>
+                  </button>
                 </Link>
               </div>
             )}
@@ -83,53 +141,124 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+              style={{
+                display: 'none',
+                padding: '0.5rem',
+                borderRadius: '0.375rem',
+                color: '#4b5563',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease-in-out'
+              }}
+              className="lg:block"
+              onMouseOver={(e) => {
+                e.target.style.color = '#111827';
+                e.target.style.backgroundColor = '#f3f4f6';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.color = '#4b5563';
+                e.target.style.backgroundColor = 'transparent';
+              }}
             >
-              <span className="sr-only">Open menu</span>
-              <div className="w-6 h-6 flex flex-col justify-center items-center">
-                <span className={`bg-current block h-0.5 w-6 rounded-sm transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-1' : '-translate-y-0.5'}`}></span>
-                <span className={`bg-current block h-0.5 w-6 rounded-sm transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : 'opacity-100'}`}></span>
-                <span className={`bg-current block h-0.5 w-6 rounded-sm transition-all duration-300 ${mobileMenuOpen ? '-rotate-45 -translate-y-1' : 'translate-y-0.5'}`}></span>
+              <span style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', whiteSpace: 'nowrap', border: 0 }}>Open menu</span>
+              <div style={{
+                width: '1.5rem',
+                height: '1.5rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+                <span style={{
+                  backgroundColor: 'currentColor',
+                  display: 'block',
+                  height: '2px',
+                  width: '1.5rem',
+                  borderRadius: '1px',
+                  transition: 'all 0.3s ease-in-out',
+                  transform: mobileMenuOpen ? 'rotate(45deg) translateY(4px)' : 'translateY(-2px)'
+                }}></span>
+                <span style={{
+                  backgroundColor: 'currentColor',
+                  display: 'block',
+                  height: '2px',
+                  width: '1.5rem',
+                  borderRadius: '1px',
+                  transition: 'all 0.3s ease-in-out',
+                  opacity: mobileMenuOpen ? 0 : 1
+                }}></span>
+                <span style={{
+                  backgroundColor: 'currentColor',
+                  display: 'block',
+                  height: '2px',
+                  width: '1.5rem',
+                  borderRadius: '1px',
+                  transition: 'all 0.3s ease-in-out',
+                  transform: mobileMenuOpen ? 'rotate(-45deg) translateY(-4px)' : 'translateY(2px)'
+                }}></span>
               </div>
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className="lg:hidden border-t border-gray-100"
-            >
-              <div className="px-2 pt-2 pb-3 space-y-1">
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
-                  >
-                    {item.name}
+        {mobileMenuOpen && (
+          <div style={{
+            borderTop: '1px solid #e5e7eb',
+            paddingTop: '0.5rem',
+            paddingBottom: '0.75rem'
+          }} className="lg:hidden">
+            <div style={{
+              padding: '0 0.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.25rem'
+            }}>
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{
+                    display: 'block',
+                    padding: '0.75rem',
+                    fontSize: '1rem',
+                    fontWeight: '500',
+                    color: '#4b5563',
+                    textDecoration: 'none',
+                    borderRadius: '0.375rem',
+                    transition: 'all 0.2s ease-in-out'
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.color = '#2563eb';
+                    e.target.style.backgroundColor = '#f9fafb';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.color = '#4b5563';
+                    e.target.style.backgroundColor = 'transparent';
+                  }}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              {!isSignedIn && (
+                <div style={{
+                  paddingTop: '1rem',
+                  borderTop: '1px solid #e5e7eb',
+                  marginTop: '0.5rem'
+                }}>
+                  <Link href="/sign-in" onClick={() => setMobileMenuOpen(false)}>
+                    <button className="btn btn-secondary" style={{ width: '100%', marginBottom: '0.5rem' }}>
+                      Sign In
+                    </button>
                   </Link>
-                ))}
-                {!isSignedIn && (
-                  <div className="pt-4 border-t border-gray-100">
-                    <Link href="/sign-in" onClick={() => setMobileMenuOpen(false)}>
-                      <Button variant="outline" className="w-full mb-2">
-                        Sign In
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
-    </motion.header>
+    </header>
   );
 }
