@@ -12,8 +12,6 @@ export default function Header() {
 
   const navigation = [
     { name: 'Home', href: '/' },
-    { name: 'How It Works', href: '/#how-it-works' },
-    { name: 'Quiz', href: '/quiz' },
     { name: 'Pricing', href: '/pricing' },
     ...(isSignedIn ? [{ name: 'Dashboard', href: '/dashboard' }] : []),
   ];
@@ -90,64 +88,70 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav style={{
-            display: 'none',
-            alignItems: 'center',
-            gap: '0.5rem'
-          }} className="md:flex">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                style={{
-                  color: isActive(item.href) ? '#2563eb' : '#4b5563',
-                  fontWeight: isActive(item.href) ? '600' : '500',
-                  textDecoration: 'none',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  position: 'relative',
-                  padding: '0.75rem 1rem',
-                  borderRadius: '0.5rem',
-                  background: isActive(item.href) ? 'rgba(37, 99, 235, 0.1)' : 'transparent'
-                }}
-                onMouseOver={(e) => {
-                  if (!isActive(item.href)) {
-                    e.target.style.color = '#2563eb';
-                    e.target.style.backgroundColor = 'rgba(37, 99, 235, 0.05)';
-                    e.target.style.transform = 'translateY(-1px)';
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (!isActive(item.href)) {
-                    e.target.style.color = '#4b5563';
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.transform = 'translateY(0)';
-                  }
-                }}
-              >
-                {item.name}
-                {isActive(item.href) && (
-                  <div style={{
-                    position: 'absolute',
-                    bottom: '-1px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '4px',
-                    height: '4px',
-                    backgroundColor: '#2563eb',
-                    borderRadius: '50%'
-                  }} />
-                )}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Auth Buttons */}
+          {/* Right side - Navigation + Auth */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             gap: '1rem'
           }}>
+            {/* Desktop Navigation */}
+            <nav style={{
+              display: 'none',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }} className="md:flex">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  style={{
+                    color: isActive(item.href) ? '#2563eb' : '#4b5563',
+                    fontWeight: isActive(item.href) ? '600' : '500',
+                    textDecoration: 'none',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    position: 'relative',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '0.5rem',
+                    background: isActive(item.href) ? 'rgba(37, 99, 235, 0.1)' : 'transparent'
+                  }}
+                  onMouseOver={(e) => {
+                    if (!isActive(item.href)) {
+                      e.target.style.color = '#2563eb';
+                      e.target.style.backgroundColor = 'rgba(37, 99, 235, 0.05)';
+                      e.target.style.transform = 'translateY(-1px)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (!isActive(item.href)) {
+                      e.target.style.color = '#4b5563';
+                      e.target.style.backgroundColor = 'transparent';
+                      e.target.style.transform = 'translateY(0)';
+                    }
+                  }}
+                >
+                  {item.name}
+                  {isActive(item.href) && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '-1px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '4px',
+                      height: '4px',
+                      backgroundColor: '#2563eb',
+                      borderRadius: '50%'
+                    }} />
+                  )}
+                </Link>
+              ))}
+            </nav>
+
+            {/* Auth Buttons */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem'
+            }}>
             {isSignedIn ? (
               <UserButton 
                 appearance={{
@@ -198,6 +202,7 @@ export default function Header() {
                 </Link>
               </div>
             )}
+            </div>
 
             {/* Mobile menu button */}
             <button
@@ -341,7 +346,8 @@ export default function Header() {
             </div>
           </div>
         )}
-      </div>
+          </div>
+        </div>
     </header>
   );
 }

@@ -1,11 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
 
 interface QuizResults {
   answers: any[];
@@ -33,15 +30,31 @@ export default function ResultsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-            className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full mx-auto mb-4"
-          />
-          <p className="text-gray-600">Loading your results...</p>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #f3f4f6 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem 1rem'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '3rem',
+            height: '3rem',
+            border: '4px solid #2563eb',
+            borderTop: '4px solid transparent',
+            borderRadius: '50%',
+            margin: '0 auto 1rem auto',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+          <p style={{ color: '#4b5563', fontSize: '1.125rem' }}>Loading your results...</p>
         </div>
+        <style jsx>{`
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     );
   }
@@ -51,10 +64,10 @@ export default function ResultsPage() {
   }
 
   const getStageColor = (stageId: number) => {
-    if (stageId <= 2) return 'bg-red-100 text-red-800 border-red-200';
-    if (stageId <= 4) return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    if (stageId <= 6) return 'bg-blue-100 text-blue-800 border-blue-200';
-    return 'bg-green-100 text-green-800 border-green-200';
+    if (stageId <= 2) return { bg: '#fef2f2', text: '#991b1b', border: '#fecaca' };
+    if (stageId <= 4) return { bg: '#fffbeb', text: '#92400e', border: '#fde68a' };
+    if (stageId <= 6) return { bg: '#eff6ff', text: '#1e40af', border: '#93c5fd' };
+    return { bg: '#f0fdf4', text: '#166534', border: '#86efac' };
   };
 
   const getNextSteps = (stage: any) => {
@@ -68,146 +81,383 @@ export default function ResultsPage() {
     ];
   };
 
+  const stageColors = getStageColor(results.stage.id);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-        
-        {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.3, type: 'spring' }}
-            className="inline-flex items-center justify-center w-20 h-20 bg-primary-100 rounded-full mb-6"
-          >
-            <span className="text-4xl">🎯</span>
-          </motion.div>
-          
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            You're at Stage {results.stage.id}:
-          </h1>
-          
-          <div className={`inline-flex px-6 py-3 rounded-full border-2 text-xl font-semibold mb-6 ${getStageColor(results.stage.id)}`}>
-            {results.stage.label}
-          </div>
-          
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            {results.stage.description}
-          </p>
-        </motion.div>
-
-        {/* Results Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          
-          {/* What This Means */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Card>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">What This Means</h2>
-              <p className="text-gray-600 leading-relaxed">
-                {results.stage.id <= 2 && "You're in the early stages of your financial journey. This is actually a great place to start because now you know exactly where you stand. Many people never take this important first step."}
-                {results.stage.id > 2 && results.stage.id <= 4 && "You're making real progress! You've moved beyond survival mode and are starting to build good financial habits. This is where momentum really begins."}
-                {results.stage.id > 4 && results.stage.id <= 6 && "You're doing great! You've built a solid foundation and are now in the growth phase of your financial journey. Keep up the excellent work."}
-                {results.stage.id > 6 && "Congratulations! You're in the advanced stages of financial success. You're well on your way to or have already achieved financial independence."}
-              </p>
-            </Card>
-          </motion.div>
-
-          {/* Your Score Breakdown */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <Card>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Score</h2>
-              <div className="text-center mb-4">
-                <div className="text-4xl font-bold text-primary-600">{results.totalScore}</div>
-                <div className="text-gray-500">out of 24 points</div>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(results.totalScore / 24) * 100}%` }}
-                  transition={{ delay: 0.8, duration: 1 }}
-                  className="bg-primary-500 h-3 rounded-full"
-                />
-              </div>
-              <p className="text-sm text-gray-500 mt-2 text-center">
-                You scored higher than {Math.round(((results.totalScore / 24) * 70) + 10)}% of people who take this quiz
-              </p>
-            </Card>
-          </motion.div>
-        </div>
-
-        {/* Next Steps */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="mb-12"
-        >
-          <Card>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Your Next Steps</h2>
-            <div className="space-y-4">
-              {getNextSteps(results.stage).map((step: string, index: number) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.8 + (index * 0.1) }}
-                  className="flex items-start"
-                >
-                  <div className="flex-shrink-0 w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
-                    {index + 1}
-                  </div>
-                  <p className="ml-4 text-gray-700">{step}</p>
-                </motion.div>
-              ))}
+    <div style={{ backgroundColor: '#ffffff' }}>
+      {/* Hero Section */}
+      <section style={{
+        background: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #f3f4f6 100%)',
+        paddingTop: '4rem',
+        paddingBottom: '5rem'
+      }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', maxWidth: '56rem', margin: '0 auto' }}>
+            <div style={{
+              width: '5rem',
+              height: '5rem',
+              background: 'linear-gradient(135deg, #10b981 0%, #3b82f6 100%)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 2rem auto',
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+            }}>
+              <span style={{ fontSize: '2rem' }}>🎯</span>
             </div>
             
-            <div className="mt-8 p-6 bg-gray-50 rounded-xl">
-              <p className="text-gray-600 mb-4">
-                <strong>Ready for your complete roadmap?</strong> Get access to your full personalized plan, progress tracker, and step-by-step guidance to move to Stage {results.stage.id + 1}.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/pricing" className="flex-1">
-                  <Button className="w-full">
-                    Get Your Full Roadmap - $9/month
-                  </Button>
-                </Link>
-                <Link href="/sign-up" className="flex-1">
-                  <Button variant="outline" className="w-full">
-                    Create Free Account
-                  </Button>
-                </Link>
+            <h1 style={{
+              fontSize: 'clamp(2rem, 6vw, 3.5rem)',
+              fontWeight: '700',
+              color: '#111827',
+              marginBottom: '1.5rem',
+              lineHeight: '1.1'
+            }}>
+              You're at Financial Stage {results.stage.id}
+            </h1>
+            
+            <div style={{
+              display: 'inline-flex',
+              padding: '0.75rem 2rem',
+              borderRadius: '2rem',
+              border: `2px solid ${stageColors.border}`,
+              backgroundColor: stageColors.bg,
+              color: stageColors.text,
+              fontSize: '1.25rem',
+              fontWeight: '600',
+              marginBottom: '2rem'
+            }}>
+              {results.stage.label}
+            </div>
+            
+            <p style={{
+              fontSize: 'clamp(1.125rem, 2.5vw, 1.5rem)',
+              color: '#4b5563',
+              lineHeight: '1.6',
+              marginBottom: '2rem'
+            }}>
+              {results.stage.description}
+            </p>
+
+            {/* Score Display */}
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '1rem',
+              backgroundColor: '#ffffff',
+              padding: '1rem 2rem',
+              borderRadius: '1rem',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{
+                  fontSize: '2rem',
+                  fontWeight: '700',
+                  color: '#2563eb'
+                }}>
+                  {results.totalScore}
+                </div>
+                <div style={{
+                  fontSize: '0.875rem',
+                  color: '#6b7280'
+                }}>
+                  out of 24
+                </div>
+              </div>
+              <div style={{ width: '1px', height: '2rem', backgroundColor: '#e5e7eb' }}></div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '600',
+                  color: '#10b981'
+                }}>
+                  {Math.round(((results.totalScore / 24) * 100))}%
+                </div>
+                <div style={{
+                  fontSize: '0.875rem',
+                  color: '#6b7280'
+                }}>
+                  Complete
+                </div>
               </div>
             </div>
-          </Card>
-        </motion.div>
-
-        {/* Social Proof */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="text-center"
-        >
-          <p className="text-gray-500 mb-4">Join thousands of others taking control of their finances</p>
-          <div className="flex justify-center items-center space-x-4 text-sm text-gray-400">
-            <span>✓ Cancel anytime</span>
-            <span>✓ No hidden fees</span>
-            <span>✓ Built for real people</span>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </section>
+
+      {/* Results Content */}
+      <section style={{
+        paddingTop: '5rem',
+        paddingBottom: '5rem',
+        backgroundColor: '#f9fafb'
+      }}>
+        <div className="container">
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+            gap: '2rem',
+            marginBottom: '3rem'
+          }}>
+            
+            {/* What This Means */}
+            <div className="card card-elevated" style={{ padding: '2.5rem' }}>
+              <h2 style={{
+                fontSize: '1.5rem',
+                fontWeight: '700',
+                color: '#111827',
+                marginBottom: '1.5rem'
+              }}>
+                What This Means for You
+              </h2>
+              <p style={{
+                color: '#4b5563',
+                lineHeight: '1.6',
+                fontSize: '1rem'
+              }}>
+                {results.stage.id <= 2 && "You're in the early stages of your financial journey. This is actually a great place to start because now you know exactly where you stand. Many people never take this important first step - you're already ahead of the game."}
+                {results.stage.id > 2 && results.stage.id <= 4 && "You're making real progress! You've moved beyond survival mode and are starting to build good financial habits. This is where momentum really begins to build and compound."}
+                {results.stage.id > 4 && results.stage.id <= 6 && "You're doing great! You've built a solid foundation and are now in the growth phase of your financial journey. Keep up the excellent work - you're on the right path."}
+                {results.stage.id > 6 && "Congratulations! You're in the advanced stages of financial success. You're well on your way to or have already achieved financial independence. Focus on optimization and wealth building."}
+              </p>
+            </div>
+
+            {/* Progress Visualization */}
+            <div className="card card-elevated" style={{ padding: '2.5rem' }}>
+              <h2 style={{
+                fontSize: '1.5rem',
+                fontWeight: '700',
+                color: '#111827',
+                marginBottom: '1.5rem'
+              }}>
+                Your Progress
+              </h2>
+              
+              {/* Progress Bar */}
+              <div style={{ marginBottom: '2rem' }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '0.5rem'
+                }}>
+                  <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>Financial Readiness</span>
+                  <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#2563eb' }}>
+                    {Math.round(((results.totalScore / 24) * 100))}%
+                  </span>
+                </div>
+                <div style={{
+                  width: '100%',
+                  height: '0.75rem',
+                  backgroundColor: '#e5e7eb',
+                  borderRadius: '0.375rem',
+                  overflow: 'hidden'
+                }}>
+                  <div style={{
+                    height: '100%',
+                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                    borderRadius: '0.375rem',
+                    width: `${(results.totalScore / 24) * 100}%`,
+                    transition: 'width 1s ease-in-out'
+                  }} />
+                </div>
+              </div>
+
+              <div style={{
+                backgroundColor: stageColors.bg,
+                border: `1px solid ${stageColors.border}`,
+                borderRadius: '0.75rem',
+                padding: '1.5rem',
+                textAlign: 'center'
+              }}>
+                <p style={{
+                  color: stageColors.text,
+                  fontSize: '0.875rem',
+                  fontWeight: '500',
+                  marginBottom: '0.5rem'
+                }}>
+                  You scored higher than
+                </p>
+                <p style={{
+                  color: stageColors.text,
+                  fontSize: '1.5rem',
+                  fontWeight: '700'
+                }}>
+                  {Math.round(((results.totalScore / 24) * 70) + 15)}% of people
+                </p>
+                <p style={{
+                  color: stageColors.text,
+                  fontSize: '0.875rem',
+                  marginTop: '0.5rem'
+                }}>
+                  who take this assessment
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Next Steps */}
+      <section style={{
+        paddingTop: '5rem',
+        paddingBottom: '5rem',
+        backgroundColor: '#ffffff'
+      }}>
+        <div className="container">
+          <div style={{ maxWidth: '48rem', margin: '0 auto' }}>
+            <div className="card card-elevated" style={{ padding: '3rem' }}>
+              <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+                <h2 style={{
+                  fontSize: '2rem',
+                  fontWeight: '700',
+                  color: '#111827',
+                  marginBottom: '1rem'
+                }}>
+                  Your Personalized Next Steps
+                </h2>
+                <p style={{
+                  color: '#4b5563',
+                  fontSize: '1.125rem',
+                  lineHeight: '1.6'
+                }}>
+                  Based on your assessment, here's exactly what to focus on next:
+                </p>
+              </div>
+
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.5rem',
+                marginBottom: '3rem'
+              }}>
+                {getNextSteps(results.stage).map((step: string, index: number) => (
+                  <div key={index} style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '1rem',
+                    padding: '1.5rem',
+                    backgroundColor: '#f9fafb',
+                    borderRadius: '0.75rem',
+                    border: '1px solid #e5e7eb'
+                  }}>
+                    <div style={{
+                      width: '2rem',
+                      height: '2rem',
+                      backgroundColor: '#2563eb',
+                      color: '#ffffff',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: '700',
+                      fontSize: '0.875rem',
+                      flexShrink: 0
+                    }}>
+                      {index + 1}
+                    </div>
+                    <p style={{
+                      color: '#374151',
+                      lineHeight: '1.6',
+                      fontSize: '1rem'
+                    }}>
+                      {step}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              
+              {/* CTA Section */}
+              <div style={{
+                backgroundColor: 'linear-gradient(135deg, #eff6ff 0%, #f3f4f6 100%)',
+                background: 'linear-gradient(135deg, #eff6ff 0%, #f3f4f6 100%)',
+                padding: '2rem',
+                borderRadius: '1rem',
+                textAlign: 'center'
+              }}>
+                <h3 style={{
+                  fontSize: '1.25rem',
+                  fontWeight: '600',
+                  color: '#111827',
+                  marginBottom: '1rem'
+                }}>
+                  Ready for Your Complete Roadmap?
+                </h3>
+                <p style={{
+                  color: '#4b5563',
+                  marginBottom: '2rem',
+                  lineHeight: '1.6'
+                }}>
+                  Get access to your full personalized plan, progress tracker, and step-by-step guidance to move to Stage {results.stage.id < 8 ? results.stage.id + 1 : 'optimization'}.
+                </p>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem',
+                  alignItems: 'center'
+                }}>
+                  <Link href="/pricing">
+                    <button className="btn btn-primary btn-lg" style={{
+                      minWidth: '250px',
+                      fontSize: '1.125rem'
+                    }}>
+                      Get Your Full Roadmap - $9/month
+                    </button>
+                  </Link>
+                  <Link href="/sign-up">
+                    <button className="btn btn-outline" style={{
+                      minWidth: '200px'
+                    }}>
+                      Create Free Account
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Social Proof */}
+      <section style={{
+        paddingTop: '3rem',
+        paddingBottom: '5rem',
+        backgroundColor: '#f9fafb'
+      }}>
+        <div className="container">
+          <div style={{ textAlign: 'center' }}>
+            <p style={{
+              color: '#6b7280',
+              marginBottom: '1.5rem',
+              fontSize: '1rem'
+            }}>
+              Join thousands of others taking control of their finances
+            </p>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '2rem',
+              flexWrap: 'wrap',
+              fontSize: '0.875rem',
+              color: '#9ca3af'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ color: '#10b981', marginRight: '0.5rem' }}>✓</span>
+                Cancel anytime
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ color: '#10b981', marginRight: '0.5rem' }}>✓</span>
+                No hidden fees
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ color: '#10b981', marginRight: '0.5rem' }}>✓</span>
+                Built for real people
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
