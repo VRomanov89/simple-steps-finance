@@ -9,7 +9,7 @@ export default function Footer() {
     Product: [
       { name: 'Take Quiz', href: '/quiz' },
       { name: 'Pricing', href: '/pricing' },
-      { name: 'How It Works', href: '/#how-it-works' },
+      { name: 'Dashboard', href: '/dashboard' },
     ],
     Company: [
       { name: 'About', href: '/about' },
@@ -17,7 +17,7 @@ export default function Footer() {
       { name: 'Blog', href: '/blog' },
     ],
     Support: [
-      { name: 'Help Center', href: '/help' },
+      { name: 'Contact Us', href: '/contact' },
       { name: 'Privacy Policy', href: '/privacy' },
       { name: 'Terms of Service', href: '/terms' },
     ],
