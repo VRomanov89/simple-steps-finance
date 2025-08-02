@@ -43,6 +43,10 @@ export async function updateUser(id: string, updates: Partial<User>) {
 }
 
 export async function updateUserByStripeCustomer(stripeCustomerId: string, updates: Partial<User>) {
+  if (!supabaseAdmin) {
+    throw new Error('Supabase admin client not available - missing SUPABASE_SERVICE_ROLE_KEY');
+  }
+
   const { data, error } = await supabaseAdmin
     .from('users')
     .update(updates)
@@ -155,6 +159,10 @@ export async function upsertUserFromAuth(authData: {
   full_name?: string;
   auth_provider?: string;
 }) {
+  if (!supabaseAdmin) {
+    throw new Error('Supabase admin client not available - missing SUPABASE_SERVICE_ROLE_KEY');
+  }
+
   const { data, error } = await supabaseAdmin
     .from('users')
     .upsert({

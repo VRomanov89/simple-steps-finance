@@ -9,6 +9,7 @@ export async function getUserFromDatabase(clerkUserId: string): Promise<User | n
     return await getUserById(clerkUserId);
   } catch (error) {
     console.error('Error fetching user from database:', error);
+    console.warn('Falling back to localStorage mode');
     return null;
   }
 }

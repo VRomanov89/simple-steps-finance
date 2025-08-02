@@ -43,7 +43,18 @@ export default function DashboardPage() {
           setUserData(dashboardData);
           setLoading(false);
         } catch (error) {
-          console.error('Error loading user data:', error);
+          console.error('Error loading user data from database:', error);
+          console.warn('Database connection failed, falling back to localStorage mode');
+          
+          // Fallback to localStorage mode if database fails
+          try {
+            const { loadUserDataFromStorage } = await import('@/utils/dashboard');
+            const localData = loadUserDataFromStorage();
+            setUserData(localData);
+            setIsPaidUser(false); // Default to free mode if database unavailable
+          } catch (localError) {
+            console.error('Failed to load from localStorage as well:', localError);
+          }
           setLoading(false);
         }
       }
