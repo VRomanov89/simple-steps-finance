@@ -1,9 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
 
 interface EmailCaptureProps {
   onSubmit: (email: string) => void;
@@ -29,68 +26,141 @@ export default function EmailCapture({ onSubmit, loading = false }: EmailCapture
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <Card>
-          <div className="text-center mb-6">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.3, type: 'spring' }}
-              className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4"
-            >
-              <span className="text-3xl">🎉</span>
-            </motion.div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">You're Almost There!</h2>
-            <p className="text-gray-600">
-              Enter your email to unlock your results and get a simple next-step plan based on your answers.
-            </p>
+    <div style={{ maxWidth: '28rem', margin: '0 auto' }}>
+      <div className="card card-elevated" style={{ padding: '2.5rem', textAlign: 'center' }}>
+        <div style={{ marginBottom: '2rem' }}>
+          <div style={{
+            width: '4rem',
+            height: '4rem',
+            background: 'linear-gradient(135deg, #10b981 0%, #3b82f6 100%)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 1.5rem auto',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+          }}>
+            <span style={{ fontSize: '1.875rem' }}>🎉</span>
+          </div>
+          <h2 style={{
+            fontSize: '1.75rem',
+            fontWeight: '700',
+            color: '#111827',
+            marginBottom: '0.75rem'
+          }}>
+            You're Almost There!
+          </h2>
+          <p style={{
+            color: '#4b5563',
+            lineHeight: '1.6',
+            fontSize: '1rem'
+          }}>
+            Enter your email to unlock your personalized financial roadmap and discover your exact next steps to financial success.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} style={{ marginBottom: '1.5rem' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your best email address"
+              style={{
+                width: '100%',
+                padding: '1rem 1.25rem',
+                fontSize: '1rem',
+                border: error ? '2px solid #dc2626' : '2px solid #e5e7eb',
+                borderRadius: '0.75rem',
+                outline: 'none',
+                transition: 'all 0.2s ease-in-out',
+                backgroundColor: '#ffffff',
+                color: '#111827'
+              }}
+              onFocus={(e) => {
+                if (!error) {
+                  e.target.style.borderColor = '#2563eb';
+                  e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                }
+              }}
+              onBlur={(e) => {
+                if (!error) {
+                  e.target.style.borderColor = '#e5e7eb';
+                  e.target.style.boxShadow = 'none';
+                }
+              }}
+              disabled={loading}
+              required
+            />
+            {error && (
+              <p style={{
+                color: '#dc2626',
+                fontSize: '0.875rem',
+                marginTop: '0.5rem',
+                textAlign: 'left'
+              }}>
+                {error}
+              </p>
+            )}
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your best email"
-                className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
-                  error ? 'border-red-300' : 'border-gray-300'
-                }`}
-                disabled={loading}
-                required
-              />
-              {error && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-sm mt-2"
-                >
-                  {error}
-                </motion.p>
-              )}
-            </div>
+          <button
+            type="submit"
+            disabled={loading || !email}
+            className="btn btn-primary btn-lg"
+            style={{
+              width: '100%',
+              fontSize: '1.125rem',
+              padding: '1rem 2rem',
+              opacity: loading || !email ? 0.5 : 1,
+              cursor: loading || !email ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {loading ? (
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                <div style={{
+                  width: '1rem',
+                  height: '1rem',
+                  border: '2px solid #ffffff',
+                  borderTop: '2px solid transparent',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite'
+                }}></div>
+                Processing...
+              </span>
+            ) : (
+              'Get My Personalized Roadmap'
+            )}
+          </button>
+        </form>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading || !email}
-            >
-              {loading ? 'Processing...' : 'Get My Results and Next Steps'}
-            </Button>
-          </form>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '0.5rem',
+          marginBottom: '1rem',
+          color: '#6b7280',
+          fontSize: '0.875rem'
+        }}>
+          <span style={{ color: '#10b981' }}>🔒</span>
+          <span>100% secure and private</span>
+        </div>
 
-          <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
-              We respect your privacy. No spam, and you can unsubscribe at any time.
-            </p>
-          </div>
-        </Card>
-      </motion.div>
+        <p style={{
+          fontSize: '0.75rem',
+          color: '#9ca3af',
+          lineHeight: '1.5'
+        }}>
+          We respect your privacy. No spam, no sales calls, just your personalized financial guidance. Unsubscribe anytime.
+        </p>
+      </div>
+
+      <style jsx>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }

@@ -1,11 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
 
 export default function PricingPage() {
   const [planType, setPlanType] = useState<'monthly' | 'yearly'>('monthly');
@@ -15,16 +12,17 @@ export default function PricingPage() {
 
   const plans = {
     monthly: {
-      price: '$9',
+      price: 9,
       period: 'month',
       priceId: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID,
       savings: null,
     },
     yearly: {
-      price: '$90',
+      price: 90,
       period: 'year',
       priceId: process.env.NEXT_PUBLIC_STRIPE_YEARLY_PRICE_ID,
       savings: 'Save 17% - get 2 months free',
+      monthlyEquivalent: 7.50,
     },
   };
 
@@ -73,222 +71,599 @@ export default function PricingPage() {
     }
   };
 
+  const benefits = [
+    { icon: '🎯', title: 'Personalized Roadmap', description: 'Custom plan based on your exact financial stage and goals' },
+    { icon: '📊', title: 'Progress Tracking', description: 'Visual milestones and streak tracking to keep you motivated' },
+    { icon: '💡', title: 'Simple Next Steps', description: 'Clear, actionable tasks without overwhelming financial jargon' },
+    { icon: '🏆', title: 'Milestone Rewards', description: 'Celebrate wins and build momentum with achievement tracking' },
+    { icon: '📚', title: 'Stage-Specific Content', description: 'Educational resources tailored to your current financial stage' },
+    { icon: '🔄', title: 'Continuous Updates', description: 'Your roadmap evolves as your financial situation improves' }
+  ];
+
+  const testimonials = [
+    { name: 'Sarah M.', stage: 'Stage 5: Investment Ready', quote: 'Finally got control of my money without feeling overwhelmed.', avatar: '👩‍💼' },
+    { name: 'Mike R.', stage: 'Stage 3: Budget Builder', quote: 'The step-by-step approach made everything so much clearer.', avatar: '👨‍💻' },
+    { name: 'Lisa K.', stage: 'Stage 6: Wealth Builder', quote: 'Love how it meets me where I am without judgment.', avatar: '👩‍🎨' }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-        
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Your Financial Roadmap Starts Here
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Take control of your money with a personalized plan, simple tools, and steady progress — one step at a time.
-          </p>
-        </motion.div>
+    <div style={{ backgroundColor: '#ffffff' }}>
+      {/* Hero Section */}
+      <section style={{
+        background: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #f3f4f6 100%)',
+        paddingTop: '4rem',
+        paddingBottom: '5rem'
+      }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', maxWidth: '1000px', margin: '0 auto' }}>
+            <h1 style={{
+              fontSize: 'clamp(2.5rem, 8vw, 4rem)',
+              fontWeight: '700',
+              color: '#111827',
+              marginBottom: '1.5rem',
+              lineHeight: '1.1'
+            }}>
+              Your Financial Freedom
+              <span style={{ 
+                display: 'block',
+                color: '#2563eb',
+                marginTop: '0.5rem'
+              }}>
+                Starts Here
+              </span>
+            </h1>
+            
+            <p style={{
+              fontSize: 'clamp(1.125rem, 2.5vw, 1.5rem)',
+              color: '#4b5563',
+              maxWidth: '48rem',
+              margin: '0 auto 3rem auto',
+              lineHeight: '1.6'
+            }}>
+              Stop struggling with generic financial advice. Get a <span style={{ fontWeight: '600', color: '#1f2937' }}>personalized roadmap</span> that meets you exactly where you are and guides you step-by-step to where you want to be.
+            </p>
 
-        {/* Plan Toggle */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex justify-center mb-12"
-        >
-          <div className="bg-gray-100 p-1 rounded-full">
-            <button
-              onClick={() => setPlanType('monthly')}
-              className={`px-6 py-2 rounded-full font-medium transition-all ${
-                planType === 'monthly'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setPlanType('yearly')}
-              className={`px-6 py-2 rounded-full font-medium transition-all ${
-                planType === 'yearly'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Yearly
-            </button>
+            {/* Social Proof */}
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: '2rem',
+              marginBottom: '3rem',
+              fontSize: '0.875rem',
+              color: '#6b7280'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ color: '#10b981', marginRight: '0.5rem' }}>✓</span>
+                Trusted by 10,000+ users
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ color: '#10b981', marginRight: '0.5rem' }}>✓</span>
+                Average 40% improvement in 90 days
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ color: '#10b981', marginRight: '0.5rem' }}>✓</span>
+                No bank connections required
+              </div>
+            </div>
           </div>
-        </motion.div>
+        </div>
+      </section>
 
-        {/* Pricing Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          
-          {/* Free Plan */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Card className="h-full">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Free</h2>
-                <div className="text-4xl font-bold text-gray-900 mb-2">$0</div>
-                <p className="text-gray-500">Forever free</p>
+      {/* Why Pay Section */}
+      <section style={{ 
+        paddingTop: '5rem', 
+        paddingBottom: '5rem', 
+        backgroundColor: '#f9fafb' 
+      }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+            <h2 style={{
+              fontSize: 'clamp(2rem, 5vw, 3rem)',
+              fontWeight: '700',
+              color: '#111827',
+              marginBottom: '1rem'
+            }}>
+              Why Invest in Your Financial Future?
+            </h2>
+            <p style={{
+              fontSize: '1.25rem',
+              color: '#4b5563',
+              maxWidth: '48rem',
+              margin: '0 auto'
+            }}>
+              Most financial advice treats everyone the same. We create a plan that's uniquely yours.
+            </p>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '2rem'
+          }}>
+            {benefits.map((benefit, index) => (
+              <div key={index} className="card" style={{
+                textAlign: 'center',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                  {benefit.icon}
+                </div>
+                <h3 style={{
+                  fontSize: '1.25rem',
+                  fontWeight: '600',
+                  color: '#111827',
+                  marginBottom: '0.75rem'
+                }}>
+                  {benefit.title}
+                </h3>
+                <p style={{
+                  color: '#4b5563',
+                  lineHeight: '1.6',
+                  flexGrow: 1
+                }}>
+                  {benefit.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section style={{ 
+        paddingTop: '5rem', 
+        paddingBottom: '5rem', 
+        backgroundColor: '#ffffff'
+      }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <h2 style={{
+              fontSize: 'clamp(2rem, 5vw, 3rem)',
+              fontWeight: '700',
+              color: '#111827',
+              marginBottom: '1rem'
+            }}>
+              Simple, Transparent Pricing
+            </h2>
+            <p style={{
+              fontSize: '1.25rem',
+              color: '#4b5563',
+              marginBottom: '2rem'
+            }}>
+              Start free, upgrade when you're ready for your personalized roadmap.
+            </p>
+
+            {/* Plan Toggle */}
+            <div style={{
+              display: 'inline-flex',
+              backgroundColor: '#f3f4f6',
+              padding: '0.25rem',
+              borderRadius: '0.75rem',
+              marginBottom: '3rem'
+            }}>
+              <button
+                onClick={() => setPlanType('monthly')}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '0.5rem',
+                  fontWeight: '500',
+                  transition: 'all 0.2s ease-in-out',
+                  backgroundColor: planType === 'monthly' ? '#ffffff' : 'transparent',
+                  color: planType === 'monthly' ? '#111827' : '#6b7280',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: planType === 'monthly' ? '0 1px 2px 0 rgba(0, 0, 0, 0.05)' : 'none'
+                }}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setPlanType('yearly')}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '0.5rem',
+                  fontWeight: '500',
+                  transition: 'all 0.2s ease-in-out',
+                  backgroundColor: planType === 'yearly' ? '#ffffff' : 'transparent',
+                  color: planType === 'yearly' ? '#111827' : '#6b7280',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: planType === 'yearly' ? '0 1px 2px 0 rgba(0, 0, 0, 0.05)' : 'none',
+                  position: 'relative'
+                }}
+              >
+                Yearly
+                {planType === 'yearly' && (
+                  <span style={{
+                    position: 'absolute',
+                    top: '-0.5rem',
+                    right: '-0.5rem',
+                    backgroundColor: '#10b981',
+                    color: '#ffffff',
+                    fontSize: '0.75rem',
+                    padding: '0.25rem 0.5rem',
+                    borderRadius: '0.375rem',
+                    fontWeight: '600'
+                  }}>
+                    Save 17%
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Pricing Cards */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '2rem',
+            maxWidth: '64rem',
+            margin: '0 auto'
+          }}>
+            
+            {/* Free Plan */}
+            <div className="card" style={{
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              textAlign: 'center'
+            }}>
+              <div style={{ marginBottom: '2rem' }}>
+                <h3 style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '600',
+                  color: '#111827',
+                  marginBottom: '0.5rem'
+                }}>
+                  Free
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{
+                    fontSize: '3rem',
+                    fontWeight: '700',
+                    color: '#111827'
+                  }}>
+                    $0
+                  </span>
+                </div>
+                <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+                  Forever free
+                </p>
               </div>
 
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-center">
-                  <span className="text-green-500 mr-3">✓</span>
-                  <span className="text-gray-700">Access to the financial quiz</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500 mr-3">✓</span>
-                  <span className="text-gray-700">See your stage and basic summary</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500 mr-3">✓</span>
-                  <span className="text-gray-700">Educational articles and resources</span>
-                </li>
-              </ul>
+              <div style={{ flexGrow: 1, marginBottom: '2rem' }}>
+                <ul style={{ 
+                  textAlign: 'left',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem'
+                }}>
+                  <li style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <span style={{ color: '#10b981', marginRight: '0.75rem', marginTop: '0.125rem' }}>✓</span>
+                    <span style={{ color: '#374151' }}>Financial stage assessment</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <span style={{ color: '#10b981', marginRight: '0.75rem', marginTop: '0.125rem' }}>✓</span>
+                    <span style={{ color: '#374151' }}>Basic stage summary and insights</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <span style={{ color: '#10b981', marginRight: '0.75rem', marginTop: '0.125rem' }}>✓</span>
+                    <span style={{ color: '#374151' }}>Educational articles and resources</span>
+                  </li>
+                </ul>
+              </div>
 
-              <Button variant="outline" className="w-full" onClick={() => router.push('/quiz')}>
+              <button 
+                onClick={() => router.push('/quiz')}
+                className="btn btn-outline"
+                style={{ width: '100%' }}
+              >
                 Take Free Quiz
-              </Button>
-            </Card>
-          </motion.div>
+              </button>
+            </div>
 
-          {/* Pro Plan */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Card className="h-full border-2 border-primary-500 relative">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="bg-primary-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-                  Most Popular
-                </span>
+            {/* Pro Plan */}
+            <div className="card card-elevated" style={{
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              textAlign: 'center',
+              border: '2px solid #2563eb',
+              position: 'relative'
+            }}>
+              <div style={{
+                position: 'absolute',
+                top: '-0.75rem',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: '#2563eb',
+                color: '#ffffff',
+                padding: '0.25rem 1rem',
+                borderRadius: '1rem',
+                fontSize: '0.875rem',
+                fontWeight: '500'
+              }}>
+                Most Popular
               </div>
               
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Pro</h2>
-                <div className="text-4xl font-bold text-gray-900 mb-2">
-                  {currentPlan.price}
+              <div style={{ marginBottom: '2rem' }}>
+                <h3 style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '600',
+                  color: '#111827',
+                  marginBottom: '0.5rem'
+                }}>
+                  Pro
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{
+                    fontSize: '3rem',
+                    fontWeight: '700',
+                    color: '#111827'
+                  }}>
+                    ${planType === 'yearly' ? currentPlan.monthlyEquivalent : currentPlan.price}
+                  </span>
+                  <span style={{ color: '#6b7280', marginLeft: '0.5rem' }}>
+                    /month
+                  </span>
                 </div>
-                <p className="text-gray-500">per {currentPlan.period}</p>
-                {currentPlan.savings && (
-                  <p className="text-green-600 font-medium text-sm mt-1">
-                    {currentPlan.savings}
+                {planType === 'yearly' && (
+                  <div style={{ marginBottom: '0.5rem' }}>
+                    <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+                      Billed annually (${currentPlan.price}/year)
+                    </p>
+                    <p style={{ color: '#10b981', fontSize: '0.875rem', fontWeight: '500' }}>
+                      {currentPlan.savings}
+                    </p>
+                  </div>
+                )}
+                {planType === 'monthly' && (
+                  <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+                    Billed monthly
                   </p>
                 )}
               </div>
 
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-center">
-                  <span className="text-green-500 mr-3">✓</span>
-                  <span className="text-gray-700">Full personalized roadmap based on your quiz results</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500 mr-3">✓</span>
-                  <span className="text-gray-700">Progress tracker and next-action reminders</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500 mr-3">✓</span>
-                  <span className="text-gray-700">Milestones and motivational streaks</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500 mr-3">✓</span>
-                  <span className="text-gray-700">Access to all future step content</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500 mr-3">✓</span>
-                  <span className="text-gray-700">Financial wins journaling + insights</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500 mr-3">✓</span>
-                  <span className="text-gray-700">Priority support</span>
-                </li>
-              </ul>
+              <div style={{ flexGrow: 1, marginBottom: '2rem' }}>
+                <ul style={{ 
+                  textAlign: 'left',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem'
+                }}>
+                  <li style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <span style={{ color: '#10b981', marginRight: '0.75rem', marginTop: '0.125rem' }}>✓</span>
+                    <span style={{ color: '#374151' }}>Complete personalized financial roadmap</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <span style={{ color: '#10b981', marginRight: '0.75rem', marginTop: '0.125rem' }}>✓</span>
+                    <span style={{ color: '#374151' }}>Progress tracking and milestone celebrations</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <span style={{ color: '#10b981', marginRight: '0.75rem', marginTop: '0.125rem' }}>✓</span>
+                    <span style={{ color: '#374151' }}>Smart next-action reminders</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <span style={{ color: '#10b981', marginRight: '0.75rem', marginTop: '0.125rem' }}>✓</span>
+                    <span style={{ color: '#374151' }}>Stage-specific educational content</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <span style={{ color: '#10b981', marginRight: '0.75rem', marginTop: '0.125rem' }}>✓</span>
+                    <span style={{ color: '#374151' }}>Financial wins journaling and insights</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'flex-start' }}>
+                    <span style={{ color: '#10b981', marginRight: '0.75rem', marginTop: '0.125rem' }}>✓</span>
+                    <span style={{ color: '#374151' }}>Priority customer support</span>
+                  </li>
+                </ul>
+              </div>
 
-              <Button 
-                className="w-full" 
+              <button 
                 onClick={handleSubscribe}
                 disabled={loading}
+                className="btn btn-primary"
+                style={{ 
+                  width: '100%',
+                  opacity: loading ? 0.5 : 1
+                }}
               >
-                {loading ? 'Processing...' : 'Start Your Journey Now'}
-              </Button>
-            </Card>
-          </motion.div>
+                {loading ? 'Processing...' : 'Start Your Journey'}
+              </button>
+            </div>
+          </div>
         </div>
+      </section>
 
-        {/* FAQ Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <Card>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-              Frequently Asked Questions
+      {/* Testimonials */}
+      <section style={{ 
+        paddingTop: '5rem', 
+        paddingBottom: '5rem', 
+        backgroundColor: '#f9fafb' 
+      }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+            <h2 style={{
+              fontSize: 'clamp(2rem, 5vw, 3rem)',
+              fontWeight: '700',
+              color: '#111827',
+              marginBottom: '1rem'
+            }}>
+              Real Results from Real People
             </h2>
-            
-            <div className="space-y-6">
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Can I cancel anytime?</h3>
-                <p className="text-gray-600">
-                  Yes — both plans are flexible and risk-free. You can cancel your subscription at any time.
-                </p>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '2rem'
+          }}>
+            {testimonials.map((testimonial, index) => (
+              <div key={index} className="card" style={{
+                textAlign: 'center',
+                background: 'linear-gradient(135deg, #eff6ff 0%, #f3f4f6 100%)',
+                border: 'none'
+              }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                  {testimonial.avatar}
+                </div>
+                <blockquote style={{
+                  color: '#374151',
+                  marginBottom: '1rem',
+                  fontStyle: 'italic',
+                  fontSize: '1rem',
+                  lineHeight: '1.6'
+                }}>
+                  "{testimonial.quote}"
+                </blockquote>
+                <div style={{ fontWeight: '600', color: '#111827', marginBottom: '0.25rem' }}>
+                  {testimonial.name}
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#2563eb', fontWeight: '500' }}>
+                  {testimonial.stage}
+                </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section style={{ 
+        paddingTop: '5rem', 
+        paddingBottom: '5rem', 
+        backgroundColor: '#ffffff' 
+      }}>
+        <div className="container">
+          <div style={{ maxWidth: '48rem', margin: '0 auto' }}>
+            <div className="card card-elevated" style={{ padding: '3rem' }}>
+              <h2 style={{
+                fontSize: '2rem',
+                fontWeight: '700',
+                color: '#111827',
+                marginBottom: '2rem',
+                textAlign: 'center'
+              }}>
+                Frequently Asked Questions
+              </h2>
               
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Do I need to link my bank?</h3>
-                <p className="text-gray-600">
-                  No — we focus on behavior and guidance, not banking data. You'll never need to connect your accounts.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Is this better than budgeting apps?</h3>
-                <p className="text-gray-600">
-                  We guide your behavior and mindset — not just your money. Think of us as your financial coach, not another spreadsheet.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-2">What if I'm already good with money?</h3>
-                <p className="text-gray-600">
-                  Our 8-stage system works for everyone, from those buried in debt to those ready for FIRE. You'll get a plan tailored to your specific stage.
-                </p>
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '2rem'
+              }}>
+                <div>
+                  <h3 style={{ fontWeight: '600', color: '#111827', marginBottom: '0.5rem', fontSize: '1.125rem' }}>
+                    Can I cancel anytime?
+                  </h3>
+                  <p style={{ color: '#4b5563', lineHeight: '1.6' }}>
+                    Absolutely. Both plans are flexible and risk-free. You can cancel your subscription at any time with no questions asked.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 style={{ fontWeight: '600', color: '#111827', marginBottom: '0.5rem', fontSize: '1.125rem' }}>
+                    Do I need to connect my bank accounts?
+                  </h3>
+                  <p style={{ color: '#4b5563', lineHeight: '1.6' }}>
+                    Never. We focus on behavior and guidance, not accessing your banking data. Your financial privacy is completely protected.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 style={{ fontWeight: '600', color: '#111827', marginBottom: '0.5rem', fontSize: '1.125rem' }}>
+                    How is this different from budgeting apps?
+                  </h3>
+                  <p style={{ color: '#4b5563', lineHeight: '1.6' }}>
+                    We guide your financial behavior and mindset, not just track your spending. Think of us as your personal financial coach, not another spreadsheet.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 style={{ fontWeight: '600', color: '#111827', marginBottom: '0.5rem', fontSize: '1.125rem' }}>
+                    What if I'm already financially stable?
+                  </h3>
+                  <p style={{ color: '#4b5563', lineHeight: '1.6' }}>
+                    Our 8-stage system works for everyone, from those struggling with debt to those planning for early retirement. You'll get a roadmap tailored to your specific stage and goals.
+                  </p>
+                </div>
               </div>
             </div>
-          </Card>
-        </motion.div>
-
-        {/* Trust Signals */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="text-center mt-12"
-        >
-          <div className="flex justify-center items-center space-x-8 text-sm text-gray-500">
-            <span className="flex items-center">
-              <span className="text-green-500 mr-2">🔒</span>
-              Secure payments
-            </span>
-            <span className="flex items-center">
-              <span className="text-green-500 mr-2">💳</span>
-              Cancel anytime
-            </span>
-            <span className="flex items-center">
-              <span className="text-green-500 mr-2">📞</span>
-              Customer support
-            </span>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section style={{
+        paddingTop: '5rem',
+        paddingBottom: '5rem',
+        background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+        color: '#ffffff'
+      }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', maxWidth: '48rem', margin: '0 auto' }}>
+            <h2 style={{
+              fontSize: 'clamp(2rem, 5vw, 3rem)',
+              fontWeight: '700',
+              marginBottom: '1.5rem'
+            }}>
+              Ready to Transform Your Financial Future?
+            </h2>
+            <p style={{
+              fontSize: 'clamp(1.125rem, 2.5vw, 1.5rem)',
+              marginBottom: '2.5rem',
+              opacity: '0.9'
+            }}>
+              Start with our free assessment, then upgrade when you're ready for your personalized roadmap.
+            </p>
+            
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+              alignItems: 'center'
+            }}>
+              <button 
+                onClick={() => router.push('/quiz')}
+                style={{
+                  backgroundColor: '#ffffff',
+                  color: '#2563eb',
+                  padding: '1rem 2rem',
+                  fontSize: '1.125rem',
+                  fontWeight: '600',
+                  borderRadius: '0.75rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  transition: 'all 0.2s ease-in-out',
+                  minWidth: '200px'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#f9fafb';
+                  e.target.style.transform = 'translateY(-1px)';
+                  e.target.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#ffffff';
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+                }}
+              >
+                Start Free Assessment
+              </button>
+              
+              <p style={{
+                fontSize: '0.875rem',
+                opacity: '0.75'
+              }}>
+                Free forever • No credit card required • Takes 3 minutes
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

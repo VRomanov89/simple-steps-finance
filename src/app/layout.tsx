@@ -17,10 +17,23 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className="font-sans antialiased min-h-screen bg-gray-50">
-          <div className="flex flex-col min-h-screen">
+        <body style={{
+          fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+          minHeight: '100vh',
+          backgroundColor: '#f9fafb',
+          margin: 0,
+          padding: 0
+        }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '100vh'
+          }}>
             <Header />
-            <main className="flex-1">
+            <main style={{
+              flex: 1,
+              paddingTop: '4.5rem'
+            }}>
               {children}
             </main>
             <Footer />

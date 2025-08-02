@@ -26,8 +26,10 @@ export default function Header() {
 
   return (
     <header style={{
-      position: 'sticky',
+      position: 'fixed',
       top: 0,
+      left: 0,
+      right: 0,
       zIndex: 50,
       backgroundColor: 'rgba(255, 255, 255, 0.95)',
       backdropFilter: 'blur(10px)',
@@ -93,7 +95,7 @@ export default function Header() {
             display: 'none',
             alignItems: 'center',
             gap: '0.5rem'
-          }} className="lg:flex">
+          }} className="md:flex">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -211,7 +213,7 @@ export default function Header() {
                 cursor: 'pointer',
                 transition: 'all 0.2s ease-in-out'
               }}
-              className="lg:hidden"
+              className="md:hidden"
               onMouseOver={(e) => {
                 e.target.style.color = '#111827';
                 e.target.style.backgroundColor = '#f3f4f6';
@@ -274,7 +276,7 @@ export default function Header() {
             backdropFilter: 'blur(10px)',
             borderRadius: '0 0 1rem 1rem',
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-          }} className="lg:hidden">
+          }} className="md:hidden">
             <div style={{
               padding: '0 0.5rem',
               display: 'flex',
