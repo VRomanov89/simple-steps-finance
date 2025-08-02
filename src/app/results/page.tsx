@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { STAGE_NEXT_STEPS } from '@/constants/stage-next-steps';
 
 interface QuizResults {
   answers: any[];
@@ -70,15 +71,11 @@ export default function ResultsPage() {
     return { bg: '#f0fdf4', text: '#166534', border: '#86efac' };
   };
 
-  const getNextSteps = (stage: any) => {
-    if (stage.next_steps && stage.next_steps.steps) {
-      return stage.next_steps.steps.slice(0, 3); // Show first 3 steps
-    }
-    return [
-      'Create a basic budget to track your spending',
-      'List all your debts and their minimum payments',
-      'Start building a small emergency fund'
-    ];
+  const getNextSteps = (stageId: number) => {
+    // Get the personalized steps for this stage, default to stage 1 if not found
+    const steps = STAGE_NEXT_STEPS[stageId] || STAGE_NEXT_STEPS[1];
+    // Return the first 5 steps (all of them)
+    return steps;
   };
 
   const stageColors = getStageColor(results.stage.id);
@@ -331,20 +328,21 @@ export default function ResultsPage() {
                 gap: '1.5rem',
                 marginBottom: '3rem'
               }}>
-                {getNextSteps(results.stage).map((step: string, index: number) => (
+                {getNextSteps(results.stage.id).map((step, index) => (
                   <div key={index} style={{
                     display: 'flex',
                     alignItems: 'flex-start',
                     gap: '1rem',
                     padding: '1.5rem',
-                    backgroundColor: '#f9fafb',
+                    backgroundColor: step.priority === 'urgent' ? '#fef2f2' : '#f9fafb',
                     borderRadius: '0.75rem',
-                    border: '1px solid #e5e7eb'
+                    border: `1px solid ${step.priority === 'urgent' ? '#fecaca' : '#e5e7eb'}`,
+                    position: 'relative'
                   }}>
                     <div style={{
-                      width: '2rem',
-                      height: '2rem',
-                      backgroundColor: '#2563eb',
+                      width: '2.5rem',
+                      height: '2.5rem',
+                      backgroundColor: step.priority === 'urgent' ? '#dc2626' : step.priority === 'high' ? '#2563eb' : '#6b7280',
                       color: '#ffffff',
                       borderRadius: '50%',
                       display: 'flex',
@@ -356,13 +354,42 @@ export default function ResultsPage() {
                     }}>
                       {index + 1}
                     </div>
-                    <p style={{
-                      color: '#374151',
-                      lineHeight: '1.6',
-                      fontSize: '1rem'
-                    }}>
-                      {step}
-                    </p>
+                    <div style={{ flex: 1 }}>
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '0.5rem',
+                        gap: '1rem'
+                      }}>
+                        <h4 style={{
+                          fontSize: '1.125rem',
+                          fontWeight: '600',
+                          color: '#111827',
+                          lineHeight: '1.3'
+                        }}>
+                          {step.title}
+                        </h4>
+                        <span style={{
+                          fontSize: '0.75rem',
+                          fontWeight: '600',
+                          color: step.priority === 'urgent' ? '#dc2626' : step.priority === 'high' ? '#2563eb' : '#6b7280',
+                          backgroundColor: step.priority === 'urgent' ? '#fee2e2' : step.priority === 'high' ? '#eff6ff' : '#f3f4f6',
+                          padding: '0.25rem 0.75rem',
+                          borderRadius: '1rem',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {step.timeframe}
+                        </span>
+                      </div>
+                      <p style={{
+                        color: '#4b5563',
+                        lineHeight: '1.6',
+                        fontSize: '0.9375rem'
+                      }}>
+                        {step.description}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>

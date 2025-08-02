@@ -31,17 +31,42 @@ export default function QuizPage() {
     setState('processing');
     
     try {
-      // Store quiz results and email in local storage temporarily
-      localStorage.setItem('quizResults', JSON.stringify({
+      const resultsWithEmail = {
         ...quizResults,
         email,
-      }));
+      };
+
+      // Store quiz results and email in local storage
+      localStorage.setItem('quizResults', JSON.stringify(resultsWithEmail));
+
+      // Send email with results
+      try {
+        const response = await fetch('/api/send-quiz-results', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            stage: quizResults?.stage,
+            totalScore: quizResults?.totalScore,
+            nextSteps: [] // Will be populated by the API based on stage
+          }),
+        });
+
+        if (!response.ok) {
+          console.warn('Failed to send email, but continuing to results page');
+        }
+      } catch (emailError) {
+        console.warn('Email sending failed:', emailError);
+        // Continue to results page even if email fails
+      }
 
       // Redirect to results page
       router.push('/results');
     } catch (error) {
       console.error('Error processing quiz:', error);
-      // Handle error appropriately
+      setState('email'); // Go back to email state on error
     }
   };
 
