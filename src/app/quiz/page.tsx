@@ -41,6 +41,12 @@ export default function QuizPage() {
 
       // Send email with results
       try {
+        console.log('Sending email with data:', {
+          email,
+          stage: quizResults?.stage,
+          totalScore: quizResults?.totalScore
+        });
+
         const response = await fetch('/api/send-quiz-results', {
           method: 'POST',
           headers: {
@@ -54,11 +60,15 @@ export default function QuizPage() {
           }),
         });
 
+        const responseData = await response.json();
+        
         if (!response.ok) {
-          console.warn('Failed to send email, but continuing to results page');
+          console.warn('Failed to send email:', responseData);
+        } else {
+          console.log('Email sent successfully:', responseData);
         }
       } catch (emailError) {
-        console.warn('Email sending failed:', emailError);
+        console.error('Email sending failed:', emailError);
         // Continue to results page even if email fails
       }
 
